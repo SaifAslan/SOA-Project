@@ -1,0 +1,46 @@
+syntax = "proto3"; 
+
+package shipping;
+
+
+// The shipping service.
+service Shipping {
+    // Sends a greeting
+    rpc SayHello (HelloRequest) returns (HelloReply) {}
+    // sends another greeting
+    rpc SayHelloAgain (HelloRequest) returns (HelloReply){}
+  
+    rpc SayHelloStreamReply (HelloRequest) returns (stream HelloReply) {}
+  }
+  
+  // The request message containing the user's name.
+  message HelloRequest {
+    string name = 1;
+  }
+  
+  // The response message containing the greetings
+  message HelloReply {
+    string message = 1;
+  }
+  // The package to be delivered
+  message Package {
+
+  }
+
+  // respreseting an address to be delivered to
+  message Address {
+
+  }
+
+  // shipmentId
+  message ShipmentId{
+    int64 ShipmentId = 1;
+  }
+
+  // Shipping Request
+  message ShippingRequest {
+    string courier = 1;
+    Package package = 2;
+    Address source = 3;
+    Address destination = 4;
+  }
