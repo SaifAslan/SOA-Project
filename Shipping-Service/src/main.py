@@ -1,1 +1,2 @@
-print("Implementation of the Shipping service in python")
+class CourierService:
+    pass
