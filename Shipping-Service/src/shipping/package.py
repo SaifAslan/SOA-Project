@@ -1,14 +1,18 @@
 from dataclasses import dataclass
+from typing import List
 
+@dataclass
+class Item:
+    item_id: str
+    name: str
+    count: int
 
 @dataclass
 class Package:
-    rectangular: str
-    weight: str
-    length: str
-    width: str
-    height: str
-    origin: str
-    destination: str
-    tracking_id: str
+    items: List[Item]
+    shape: str
+    weight: float
+    length: float
+    width: float
+    height: float
     
