@@ -1,3 +1,4 @@
+import requests
 from flask_restful import reqparse
 
 from database_connection import connect_to_databse, app, logging
@@ -32,6 +33,9 @@ def add_user():
         cursor.execute(sql)
         connection.commit()
         logging.debug("Query executed")
+
+        send_credentials_to_auth_service(user_name, password)
+
         return "User Created Successfully"
     except Exception as e:
         logging.exception("Exception while executing query", str(e))
@@ -42,3 +46,11 @@ def add_user():
     finally:
         cursor.close()
         connection.close()
+
+
+def send_credentials_to_auth_service(user_name, password):
+    try:
+        payload = {"userName": user_name, "password": password}
+        requests.post("http://127.0.0.1:6000/registerusercredentials", json=payload)
+    except Exception as e:
+        logging.exception("Exception occured while sending credentials", str(e))

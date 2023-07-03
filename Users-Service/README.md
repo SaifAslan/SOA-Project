@@ -14,4 +14,4 @@ To run the app (should not be required as it should be covered by docker as per 
 1- create python virtual environment (using command palete in vs code)
 2- check requirements.txt file for required Flask and Flask-Restful modules (use "pip install" command)
 3- navigate to the "api" folder
-4- run "python -m flask run" in terminal
+4- run "python -m flask run -p 5000" in terminal

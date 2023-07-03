@@ -11,7 +11,10 @@ def get_user(user_name):
         cursor.execute(sql)
         row = cursor.fetchall()
         logging.debug("Query executed")
-        return row
+        if not row:
+            return "Incorrect Username"
+        else:
+            return row
     except Exception as e:
         logging.exception("Exception while executing query", str(e))
         return "Error occured while fetching user details"
