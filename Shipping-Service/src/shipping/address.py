@@ -10,4 +10,3 @@ class Address:
     zip: str
     street: str
     delivery_point: str
-    carrier_route: str

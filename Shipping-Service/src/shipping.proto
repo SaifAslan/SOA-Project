@@ -3,44 +3,129 @@ syntax = "proto3";
 package shipping;
 
 
+// An address that defines either the 
+// source or destination of the shipment
+message Address {
+  string state = 1;
+  string city = 2;
+  string zip = 3;
+  string street = 4;
+  string country = 5;
+}
+
+// A single item to be shipped, this includes the item id
+// the name and the quantity of the item being shipped
+message Item {
+  string item_id = 1;
+  string item_name = 2;
+  int32 quantity = 3;
+
+}
+
+// The package to be shipped
+// It contains a shipment id and some items to be shipped in it
+message Package {
+  repeated Item items = 2;
+  string shape = 3;
+  float weight = 4;
+  float length = 5;
+  float width = 6;
+  float height = 7;
+}
+
+// Defines a shipment update on the location of 
+// the shipment currently
+message ShipmentUpdate {
+  string status = 1;
+  string location = 2;
+  string datetime = 3;
+}
+
+// This is used to send a shipment update directly 
+// through the API or the CLI
+message ShipmentUpdateRequest {
+  string shipment_id = 1;
+  string status = 2;
+  string location = 3;
+  string datetime = 4;
+}
+
+// Defines a full shipment information
+// used to keep full shipment infromation on the database
+message Shipment {
+  string shipment_id = 1;
+  string user_id = 2;
+  string courier = 2;
+  repeated ShipmentUpdate updates = 3;
+  bool found = 4;
+  bool delivered = 5;
+  ShipmentUpdate last = 6;
+  Package package =  7;
+
+}
+
+// Shipping Request
+message ShippingRequest {
+  string courier = 1;
+  string user_id = 2;
+  Package package = 3;
+  Address source = 4;
+  Address destination = 5;
+}
+
+
+// Package item creation request
+message RequestCreatePackage {
+  repeated Item items = 1;
+}
+
+// Estimate the cost of a shippment irrespective of the courier
+message EstimateShipmentCostNoCourier {
+  Package package = 1;
+  Address source = 2;
+  Address destination = 3;
+}
+
+message EstimateShipmentCost {
+  string courier = 1;
+  Package package = 2;
+  Address source = 3;
+  Address destination = 4;
+}
+
+message EstimateShipmentCostResponse {
+  float amount = 1;
+  int days = 2;
+}
+
+message ShipmentTrackRequest {
+  string shipment_id = 1;
+}
+
+message CourierListResponse {
+  repeated string couriers = 1;
+}
+
+
 // The shipping service.
 service Shipping {
-    // Sends a greeting
-    rpc SayHello (HelloRequest) returns (HelloReply) {}
-    // sends another greeting
-    rpc SayHelloAgain (HelloRequest) returns (HelloReply){}
+    // calculates the cost of a shipment
+    rpc CalculateShippingCost (EstimateShipmentCost) returns (EstimateShipmentCostResponse) {}
+    // calculates teh cost of a shipment for no particular courier
+    rpc CalculateShippingCostNoCourier (EstimateShipmentCostNoCourier) returns (EstimateShipmentCostResponse) {}
+    // creates a package from a list of items, since the client may not be able to create packages
+    rpc CreatePackage (RequestCreatePackage) return (Package) {}
+    // starts a shipment based on the hsipment request
+    rpc StartShipping (ShippingRequest) returns (Shipment) {}
+    // gets an immediate update (live tracking) for a shipment and returns a new shipment update (It stores the shipment update in the database)
+    rpc TrackShippment(ShipmentTrackRequest) returns (ShipmentUpdate) {}
+    // deliver a particular shipment
+    rpc DeliverShipment(ShipmentUpdateRequest) returns (Shipment) {}
+    //  manualy update shipment status either from teh api or the cli
+    rpc UpdateShipmentStatus(ShipmentUpdateRequest) returns (Shipment) {}
+    //  get the list of all supported couriers
+    rpc GetAllCouriers() returns (CourierListResponse) {}
+
+  }
   
-    rpc SayHelloStreamReply (HelloRequest) returns (stream HelloReply) {}
-  }
   
-  // The request message containing the user's name.
-  message HelloRequest {
-    string name = 1;
-  }
-  
-  // The response message containing the greetings
-  message HelloReply {
-    string message = 1;
-  }
-  // The package to be delivered
-  message Package {
-
-  }
-
-  // respreseting an address to be delivered to
-  message Address {
-
-  }
-
-  // shipmentId
-  message ShipmentId{
-    int64 ShipmentId = 1;
-  }
-
-  // Shipping Request
-  message ShippingRequest {
-    string courier = 1;
-    Package package = 2;
-    Address source = 3;
-    Address destination = 4;
-  }
