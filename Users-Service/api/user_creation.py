@@ -31,11 +31,11 @@ def add_user():
         sql = f"""INSERT INTO users (username, password, email, mobilenumber, address, usertype) 
                     Values ('{user_name}', '{password}', '{email}', '{mobile_number}', '{address}', '{user_type}')"""
         cursor.execute(sql)
-        connection.commit()
-        logging.debug("Query executed")
 
         send_credentials_to_auth_service(user_name, password)
 
+        connection.commit()
+        logging.debug("Query executed")
         return "User Created Successfully"
     except Exception as e:
         logging.exception("Exception while executing query", str(e))
