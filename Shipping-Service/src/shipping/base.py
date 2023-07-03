@@ -5,7 +5,7 @@ from typing import List
 from shipping.package import Package
 from shipping.address import Address
 
-def format_datetime(input_date:datetime):
+def format_timestamp(input_date:datetime):
     temp = input_date.timestamp()
     temp = str(temp).split('.')[0]
     return temp
@@ -27,8 +27,7 @@ class TrackingCheckpoint:
     Represents a tracking checkpoint
     """
     status: str
-    time: str
-    space: str
+    location: str
     datetime: str
     
     
@@ -100,12 +99,4 @@ class CourierTracker(ABC):
     
     @abstractmethod
     def calculate_cost(self, source: Address, target: Address, package: Package):
-        raise NotImplementedError
-        
-        
-                
-
-                
-            
-            
-    
+        raise NotImplementedError 
