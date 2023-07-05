@@ -1,10 +1,7 @@
-from database_connection import app
-from user_authentication import authenticate_user
-from user_credentials_registration import register_user_credentials
+from user_authentication import app, authenticate_user
 
 # instantiate the web methods
 authenticate_user
-register_user_credentials
 
 
 if __name__ == "__main__":

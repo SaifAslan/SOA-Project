@@ -1,7 +1,14 @@
 from flask_restful import reqparse
+from flask import Flask
+import json
+import logging
+import requests
 
-from database_connection import connect_to_databse, app, logging
 
+app = Flask("UserLoginAPI")
+
+# allow logging to include debug level messages
+logging.basicConfig(level=logging.DEBUG)
 
 # initialize request parser that will be used in user creation
 parser = reqparse.RequestParser()
@@ -14,22 +21,21 @@ def authenticate_user():
     args = parser.parse_args()
     user_name = args["userName"]
     password = args["password"]
+    return check_user_credentials(user_name, password)
 
-    connection = connect_to_databse()
+
+def check_user_credentials(user_name, password):
+    is_authenticated = "False"
     try:
-        # run query
-        cursor = connection.cursor()
-        sql = f"""SELECT * FROM userscredentials WHERE username = '{user_name}' AND password = '{password}'"""
-        cursor.execute(sql)
-        row = cursor.fetchall()
-        logging.debug("Query executed")
-        if not row:
-            return "Incorrect User Credentials"
+        response = requests.get(f"http://127.0.0.1:5000/getuser/{user_name}")
+        user_details = json.loads(response.text)
+        logging.debug(user_details)
+        if user_details and password == user_details["password"]:
+            is_authenticated = "True"
+            logging.debug(f"{user_name} was authenticated successfully")
         else:
-            return row
+            logging.debug("Incorrect credentials")
     except Exception as e:
-        logging.exception("Exception while executing query", str(e))
-        return "Error occured while authenticating user"
+        logging.exception("Exception occured while checking user credentials", str(e))
     finally:
-        cursor.close()
-        connection.close()
+        return is_authenticated

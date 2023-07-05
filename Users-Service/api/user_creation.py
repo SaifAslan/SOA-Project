@@ -1,4 +1,3 @@
-import requests
 from flask_restful import reqparse
 
 from database_connection import connect_to_databse, app, logging
@@ -24,6 +23,8 @@ def add_user():
     address = args["address"]
     user_type = args["userType"]
 
+    response_message = "False"
+
     connection = connect_to_databse()
     try:
         # run query
@@ -31,26 +32,16 @@ def add_user():
         sql = f"""INSERT INTO users (username, password, email, mobilenumber, address, usertype) 
                     Values ('{user_name}', '{password}', '{email}', '{mobile_number}', '{address}', '{user_type}')"""
         cursor.execute(sql)
-
-        send_credentials_to_auth_service(user_name, password)
-
         connection.commit()
         logging.debug("Query executed")
-        return "User Created Successfully"
+        logging.debug("User Created Successfully")
+        response_message = "True"
     except Exception as e:
         logging.exception("Exception while executing query", str(e))
         if "UNIQUE constraint failed" in str(e.args):
-            return "Username already exists"
-        else:
-            return "Error occured while creating user"
+            logging.debug("Username already exists")
+        response_message = "False"
     finally:
         cursor.close()
         connection.close()
-
-
-def send_credentials_to_auth_service(user_name, password):
-    try:
-        payload = {"userName": user_name, "password": password}
-        requests.post("http://127.0.0.1:6000/registerusercredentials", json=payload)
-    except Exception as e:
-        logging.exception("Exception occured while sending credentials", str(e))
+        return response_message

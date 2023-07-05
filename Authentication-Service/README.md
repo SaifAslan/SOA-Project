@@ -1,12 +1,11 @@
-This service uses Python Flask and REST to authenticate users in an SQLite database. It contains 2 gateways; "/authenticateuser" for user authentication and "/registerusercredentials" for for saving user credentials.
+This service uses Python Flask and REST to authenticate users. It contains 1 gateway; "/authenticateuser" for user authentication.
 
-"/authenticateuser" uses a POST method that requires a request containing the following fields:
-1- userName (not empty)
-2- password (not empty)
-
-"/registerusercredentials" is used by the Users service and should not be used by the front end, it uses a POST method that requires a request containing the following fields:
-1- userName (not empty)
-2- password (not empty)
+"/authenticateuser" POST method:
+input:
+    userName (not empty)
+    password (not empty)
+output:
+    "True"/"False"
 
 To run the app (should not be required as it should be covered by docker as per my understanding):
 1- create python virtual environment (using command palete in vs code)
