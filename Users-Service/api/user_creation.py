@@ -29,7 +29,7 @@ def add_user():
     try:
         # run query
         cursor = connection.cursor()
-        sql = f"""INSERT INTO users (username, password, email, mobilenumber, address, usertype) 
+        sql = f"""INSERT INTO users (user_name, password, email, mobile_number, address, user_type) 
                     Values ('{user_name}', '{password}', '{email}', '{mobile_number}', '{address}', '{user_type}')"""
         cursor.execute(sql)
         connection.commit()

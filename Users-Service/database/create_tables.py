@@ -10,15 +10,18 @@ logging.debug("Connected to database successfully")
 # create users table
 sql = """
 CREATE TABLE users (
-username TEXT PRIMARY KEY,
+user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+user_name TEXT NOT NULL,
 password TEXT NOT NULL,
 email TEXT,
-mobilenumber TEXT,
+mobile_number TEXT,
 address TEXT,
-usertype TEXT NOT NULL COLLATE NOCASE,
+user_type TEXT NOT NULL COLLATE NOCASE,
+CONSTRAINT username_not_empty CHECK(user_name != ''),
+CONSTRAINT username_unique UNIQUE(user_name),
 CONSTRAINT password_not_empty CHECK(password != ''),
-CONSTRAINT usertype_not_empty CHECK(usertype != ''),
-CONSTRAINT usertype_value CHECK (LOWER(usertype)='buyer' OR LOWER(usertype)='seller')
+CONSTRAINT usertype_not_empty CHECK(user_type != ''),
+CONSTRAINT usertype_value CHECK (LOWER(user_type)='buyer' OR LOWER(user_type)='seller')
 )"""
 
 
