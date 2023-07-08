@@ -1,6 +1,7 @@
 from flask import Flask
 import logging
 import sqlite3
+import bcrypt
 
 app = Flask("UserRegistrationAPI")
 
@@ -16,3 +17,21 @@ def connect_to_databse():
         return "Error occured while connecting to database"
     finally:
         return connection
+
+
+def hash_password(password):
+    hash = ""
+    try:
+        if password:
+            # convert password to byte array
+            bytes = password.encode("utf-8")
+
+            # generate the salt
+            salt = bcrypt.gensalt()
+
+            # hash the password
+            hash = bcrypt.hashpw(bytes, salt)
+    except Exception as e:
+        logging.exception("Exception while hashing password", str(e))
+    finally:
+        return hash

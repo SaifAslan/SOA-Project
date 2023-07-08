@@ -7,8 +7,11 @@ logging.basicConfig(level=logging.DEBUG)
 connection = sqlite3.connect("soa_registration")
 logging.debug("Connected to database successfully")
 
+# drop any previous users table
+sql_drop = """DROP TABLE users"""
+
 # create users table
-sql = """
+sql_create = """
 CREATE TABLE users (
 user_id INTEGER PRIMARY KEY AUTOINCREMENT,
 user_name TEXT NOT NULL,
@@ -24,7 +27,7 @@ CONSTRAINT usertype_not_empty CHECK(user_type != ''),
 CONSTRAINT usertype_value CHECK (LOWER(user_type)='buyer' OR LOWER(user_type)='seller')
 )"""
 
-
-connection.execute(sql)
+connection.execute(sql_drop)
+connection.execute(sql_create)
 logging.debug("users table created successfully!")
 connection.close()

@@ -3,6 +3,7 @@ from flask import Flask
 import json
 import logging
 import requests
+import bcrypt
 
 
 app = Flask("UserLoginAPI")
@@ -30,7 +31,7 @@ def check_user_credentials(user_name, password):
         response = requests.get(f"http://127.0.0.1:5000/getuser/{user_name}")
         user_details = json.loads(response.text)
         logging.debug(user_details)
-        if user_details and password == user_details["password"]:
+        if user_details and check_password(password, user_details["password"]):
             is_authenticated = "True"
             logging.debug(f"{user_name} was authenticated successfully")
         else:
@@ -39,3 +40,20 @@ def check_user_credentials(user_name, password):
         logging.exception("Exception occured while checking user credentials", str(e))
     finally:
         return is_authenticated
+
+
+def check_password(receied_password, hashed_password):
+    is_correct = ""
+    try:
+        if receied_password:
+            # convert password to byte array
+            bytes = receied_password.encode("utf-8")
+            # convert hashed password to byte array as it can only be stored as a string representation of
+            # byte array in database
+            hashed_password = hashed_password[1:].replace("'", "").encode("utf-8")
+            # check password
+            is_correct = bcrypt.checkpw(bytes, hashed_password)
+    except Exception as e:
+        logging.exception("Exception while checking password", str(e))
+    finally:
+        return is_correct
