@@ -55,12 +55,12 @@ message ShipmentUpdateRequest {
 message Shipment {
   string shipment_id = 1;
   string user_id = 2;
-  string courier = 2;
-  repeated ShipmentUpdate updates = 3;
-  bool found = 4;
-  bool delivered = 5;
-  ShipmentUpdate last = 6;
-  Package package =  7;
+  string courier = 3;
+  repeated ShipmentUpdate updates = 4;
+  bool found = 5;
+  bool delivered = 6;
+  ShipmentUpdate last = 7;
+  Package package =  8;
 
 }
 
@@ -95,7 +95,7 @@ message EstimateShipmentCost {
 
 message EstimateShipmentCostResponse {
   float amount = 1;
-  int days = 2;
+  int32 days = 2;
 }
 
 message ShipmentTrackRequest {
@@ -106,6 +106,10 @@ message CourierListResponse {
   repeated string couriers = 1;
 }
 
+message CourierListRequest {
+  optional int32 number_of_couriers = 5;
+}
+
 
 // The shipping service.
 service Shipping {
@@ -114,7 +118,7 @@ service Shipping {
     // calculates teh cost of a shipment for no particular courier
     rpc CalculateShippingCostNoCourier (EstimateShipmentCostNoCourier) returns (EstimateShipmentCostResponse) {}
     // creates a package from a list of items, since the client may not be able to create packages
-    rpc CreatePackage (RequestCreatePackage) return (Package) {}
+    rpc CreatePackage (RequestCreatePackage) returns (Package) {}
     // starts a shipment based on the hsipment request
     rpc StartShipping (ShippingRequest) returns (Shipment) {}
     // gets an immediate update (live tracking) for a shipment and returns a new shipment update (It stores the shipment update in the database)
@@ -124,8 +128,9 @@ service Shipping {
     //  manualy update shipment status either from teh api or the cli
     rpc UpdateShipmentStatus(ShipmentUpdateRequest) returns (Shipment) {}
     //  get the list of all supported couriers
-    rpc GetAllCouriers() returns (CourierListResponse) {}
-
+    rpc GetAllCouriers(CourierListRequest) returns (CourierListResponse) {}
+    //  get shipment information
+    rpc GetShipmentInformation(ShipmentTrackRequest) returns (Shipment) {}
   }
   
   

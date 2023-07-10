@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from enum import Enum
+from shipping.base import Shipment, ShipmentCheckpoint
+from shipping.package import Package, Item
 
 
 app = FastAPI(title="cmp7174 shipping",
@@ -16,3 +18,39 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.post("/calculateShippingCost")
+def calculateShippingCost():
+    pass
+
+@app.post("/calculateShippingCostNoCourier")
+def calculateShippingCostNoCourier():
+    pass
+
+@app.post("/createPackage")
+def createPackage():
+    pass
+
+@app.post("/startShipping")
+def startShipping():
+    pass
+
+@app.get("/trackShipment/{shipment_id}")
+def trackShipment(shipment_id: str):
+    pass
+
+@app.get("/deliverShipment/{shipment_id}")
+def deliverShipment(shipment_id: str):
+    pass
+
+@app.post("/updateShipmentStatus/{shipment_id}")
+def updateShipmentStatus(shipment_id:str):
+    pass
+
+@app.get("/getAllCouriers")
+def getAllCouriers():
+    pass
+
+@app.get("/getShipmentInformation/{shipment_id}")
+def getShipmentInformation(shipment_id:str):
+    pass

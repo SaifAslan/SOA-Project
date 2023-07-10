@@ -3,4 +3,4 @@ This sub project focuses on the implementation of the shipping service in python
 
 To start the application run the following commands:
 - Install and start mongodb server ``
-- ``
+- Create Grpc Stups ` python -m grpc_tools.protoc -I . --python_out=. --pyi_out=. --grpc_python_out=. shipping.proto`

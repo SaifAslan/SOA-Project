@@ -12,17 +12,17 @@ def format_timestamp(input_date:datetime):
 
 DELIVERED = 'delivered'
 
-class InvalidTrackingNumber(ValueError):
+class InvalidShippingNumber(ValueError):
     '''
     This is an error that is thrown wnen an invalid tracking number
     is provided
     '''
     def __init__(self, message):
         self.message = message
-        super(InvalidTrackingNumber, self).__init__()
+        super(InvalidShippingNumber, self).__init__()
    
 @dataclass     
-class TrackingCheckpoint:
+class ShipmentCheckpoint:
     """
     Represents a tracking checkpoint
     """
@@ -32,16 +32,17 @@ class TrackingCheckpoint:
     
     
 @dataclass
-class TrackingResult:
+class Shipment:
     """
     Represents the tracking results for a parcel
     """
     courier: str
     tracking_number: str
-    updates: List[TrackingCheckpoint]
+    package: Package
+    updates: List[ShipmentCheckpoint]
     found:bool = field(init=False)
     delivered: bool
-    last: TrackingCheckpoint = field(init=None)
+    last: ShipmentCheckpoint = field(init=None)
     
     
     def __post_init__(self):
