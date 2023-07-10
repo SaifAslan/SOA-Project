@@ -1,0 +1,49 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://spring.io/guides/gs-producing-web-service-cart"
+           targetNamespace="http://spring.io/guides/gs-producing-web-service-cart" elementFormDefault="qualified">
+
+    <xs:element name="postCartRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="CartSubmissionRequest" type="tns:CartData"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="postCartResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="CartSubmissionRequest" type="tns:CartData"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
+    <!-- Define complex type for the cart data -->
+    <xs:complexType name="CartData">
+        <xs:sequence>
+            <!-- The cartId or any other unique identifier for the cart (optional) -->
+            <xs:element name="cartId" type="xs:string" minOccurs="0"/>
+            <!-- Elements representing user details, if needed (optional) -->
+            <xs:element name="userId" type="xs:string" minOccurs="0"/>
+            <!-- Repeating element for cart items -->
+            <xs:element name="cartItem" type="tns:CartItem" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <!-- Define complex type for a single cart item -->
+    <xs:complexType name="CartItem">
+        <xs:sequence>
+            <xs:element name="productId" type="xs:string"/>
+            <xs:element name="quantity" type="xs:int"/>
+            <xs:element name="amount" type="xs:double"/>
+            <!-- Add any other relevant elements for each item in the cart -->
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+</xs:schema>
