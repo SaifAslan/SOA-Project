@@ -32,8 +32,7 @@ const ProductPage = ({}) => {
             // className="product-image"
           />
         </Col>
-        <Col xs={24} md={12}>
-          {" "}
+        <Col xs={24} md={12}> 
           <Card className="product-details">
             <h1 className="product-name">{product.title}</h1>
             <p className="product-description">{product.description}</p>

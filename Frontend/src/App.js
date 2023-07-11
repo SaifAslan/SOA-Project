@@ -5,6 +5,8 @@ import AppLayout from "./components/AppLayout";
 import { Route, Routes } from "react-router-dom";
 import Products from "./routes/Products";
 import Login from "./routes/Login";
+import Checkout from "./routes/Checkout";
+import Strip from "./routes/strip";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
             <Route path="/product/:productId" Component={Product} />
             <Route path="/cart" Component={Cart} />
             <Route path="/login" Component={Login} />
+            <Route path="/checkout" Component={Checkout} />
+            <Route path="/stripe" Component={Strip} />
           </Routes>
         </div>
       </AppLayout>

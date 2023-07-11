@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Card, Button, InputNumber, Row, Col } from "antd";
-import "../styles/cart.scss";
-import { Router, Route, Routes } from "react-router-dom";
-const CartPage = () => {
+import  "../styles/cart.scss";
+import { Route, Router } from "react-router-dom";
+
+const Checkout = () => {
   // Replace with your cart data
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "Product 1", price: 10.99, quantity: 2 },
@@ -76,12 +77,10 @@ const CartPage = () => {
             </Card>
           </div>
         </Col>
+    
       </Row>
-      {/* <Routes>
-        <Route path="/checkout" Component={<h1>bhfjehfj</h1>} />
-      </Routes> */}
     </div>
   );
 };
 
-export default CartPage;
+export default Checkout;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Card, Col, Row, Select } from "antd";
+import { Link } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -111,7 +112,9 @@ const Products = () => {
       <Row gutter={[16, 16]}>
         {sortedProducts.map((product) => (
           <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
-            <ProductCard product={product} />
+            <Link to={"product/" + product.id}>
+              <ProductCard product={product} />
+            </Link>
           </Col>
         ))}
       </Row>
