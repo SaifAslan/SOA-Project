@@ -1,4 +1,7 @@
-.cart-item {
+.cart-page{
+  width: 100%;
+
+  .cart-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,4 +33,4 @@
   .summary-card {
     padding: 16px;
   }
-  
+  }

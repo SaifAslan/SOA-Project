@@ -70,7 +70,7 @@ const ProductCard = ({ product }) => {
   );
 };
 
-const ProductListPage = () => {
+const Products = () => {
   const [sorting, setSorting] = useState("price"); // Default sorting option
 
   // Handler for sorting option change
@@ -119,4 +119,4 @@ const ProductListPage = () => {
   );
 };
 
-export default ProductListPage;
+export default Products;
