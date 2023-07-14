@@ -115,7 +115,7 @@ message CourierListRequest {
 service Shipping {
     // calculates the cost of a shipment
     rpc CalculateShippingCost (EstimateShipmentCost) returns (EstimateShipmentCostResponse) {}
-    // calculates teh cost of a shipment for no particular courier
+    // calculates the cost of a shipment for no particular courier
     rpc CalculateShippingCostNoCourier (EstimateShipmentCostNoCourier) returns (EstimateShipmentCostResponse) {}
     // creates a package from a list of items, since the client may not be able to create packages
     rpc CreatePackage (RequestCreatePackage) returns (Package) {}
