@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, Col, Row, Select } from "antd";
 import { Link } from "react-router-dom";
-
+// import { useSelector, useDispatch } from 'react-redux'
 const { Option } = Select;
 
 // Sample product data
@@ -12,8 +12,7 @@ const products = [
     description:
       "Immerse yourself in high-quality sound with these wireless Bluetooth earbuds. Enjoy seamless connectivity and convenience on the go.",
     price: 49.99,
-    photo:
-      "https://www.gant.co.uk/dw/image/v2/BFLN_PRD/on/demandware.static/-/Sites-gant-master/default/dwf2e5d003/pim/202204/234100/110/202204-234100-110-flat-fv-1.jpg?sw=650",
+    photo: "https://i.ebayimg.com/images/g/bLcAAOSwFTxkJjrV/s-l1600.jpg",
   },
   {
     id: 2,
@@ -32,7 +31,7 @@ const products = [
       "Indulge in the rich and aromatic flavors of our premium coffee beans. Sourced from the finest coffee plantations, these beans offer a truly satisfying coffee experience.",
     price: 12.99,
     photo:
-      "https://www.gant.co.uk/dw/image/v2/BFLN_PRD/on/demandware.static/-/Sites-gant-master/default/dwf2e5d003/pim/202204/234100/110/202204-234100-110-flat-fv-1.jpg?sw=650",
+      "https://media.davidnieper.co.uk/catalog/product/1/3/13bd6de3138e105acaf577806deaa7bae544bcc7_maria_cotton_summer_dress_4043_SS23_1_13.jpg?quality=80&bg-color=255,255,255&fit=bounds&height=&width=&canvas=:",
   },
   {
     id: 20,
@@ -40,8 +39,7 @@ const products = [
     description:
       "Expand your storage capacity and securely store your files with this portable external hard drive. With ample space and fast data transfer speeds, it's the perfect companion for your digital storage needs.",
     price: 89.99,
-    photo:
-      "https://www.gant.co.uk/dw/image/v2/BFLN_PRD/on/demandware.static/-/Sites-gant-master/default/dwf2e5d003/pim/202204/234100/110/202204-234100-110-flat-fv-1.jpg?sw=650",
+    photo: "https://cdn.chums.co.uk/prodimg/MX007_Grey_1_zoom.jpg",
   },
 ];
 
@@ -51,7 +49,14 @@ const ProductCard = ({ product }) => {
   return (
     <Card
       hoverable
-      cover={<img alt={title} src={photo} />}
+      cover={
+        <img
+          alt={title}
+          height={450}
+          style={{ objectFit: "cover" }}
+          src={photo}
+        />
+      }
       style={{ marginBottom: 20 }}
     >
       <h3>{title}</h3>
@@ -73,6 +78,10 @@ const ProductCard = ({ product }) => {
 
 const Products = () => {
   const [sorting, setSorting] = useState("price"); // Default sorting option
+
+  // const user = useSelector((state) => state.user);
+
+  // console.log("user", user);
 
   // Handler for sorting option change
   const handleSortingChange = (value) => {

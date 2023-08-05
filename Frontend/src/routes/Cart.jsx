@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Card, Button, InputNumber, Row, Col } from "antd";
 import "../styles/cart.scss";
-import { Router, Route, Routes } from "react-router-dom";
 const CartPage = () => {
   // Replace with your cart data
   const [cartItems, setCartItems] = useState([

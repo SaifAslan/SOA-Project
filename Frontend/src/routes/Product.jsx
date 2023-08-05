@@ -4,7 +4,6 @@ import { Routes, Route, useParams } from "react-router-dom";
 
 const ProductPage = ({}) => {
   const { productId } = useParams();
-  console.log(productId);
   // Replace with your product data
   const product = {
     id: 1,
@@ -13,7 +12,7 @@ const ProductPage = ({}) => {
       "Immerse yourself in high-quality sound with these wireless Bluetooth earbuds. Enjoy seamless connectivity and convenience on the go.",
     price: 49.99,
     photo:
-      "https://www.gant.co.uk/dw/image/v2/BFLN_PRD/on/demandware.static/-/Sites-gant-master/default/dwf2e5d003/pim/202204/234100/110/202204-234100-110-flat-fv-1.jpg?sw=650",
+      "https://media.davidnieper.co.uk/catalog/product/1/3/13bd6de3138e105acaf577806deaa7bae544bcc7_maria_cotton_summer_dress_4043_SS23_1_13.jpg?quality=80&bg-color=255,255,255&fit=bounds&height=&width=&canvas=:",
   };
 
   const addToCart = () => {
@@ -29,6 +28,8 @@ const ProductPage = ({}) => {
           <img
             alt={product.name}
             src={product.photo}
+            height={600}
+            style={{objectFit: 'cover'}}
             // className="product-image"
           />
         </Col>
