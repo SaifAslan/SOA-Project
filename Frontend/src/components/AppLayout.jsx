@@ -12,12 +12,12 @@ const { Header, Content } = Layout;
 const AppLayout = ({ children }) => {
   return (
     <Layout>
-      <Header>
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+      <Header style={{paddingInline:0}}>
+        <Menu  mode="horizontal" defaultSelectedKeys={['1']}>
           <Menu.Item key="1" icon={<HomeOutlined />}>
-            <Link to="/">Home</Link>
-          </Menu.Item>
-          <Menu.Item key="2" icon={<ShoppingCartOutlined />}>
+            <Link to={"/"}>Home</Link>
+          </Menu.Item> 
+         <Menu.Item key="2" icon={<ShoppingCartOutlined />}>
             <Link to="/cart">Cart</Link>
           </Menu.Item>
           <Menu.Item key="3" icon={<UserOutlined />}>
@@ -25,8 +25,8 @@ const AppLayout = ({ children }) => {
           </Menu.Item>
         </Menu>
       </Header>
-      <Content style={{ padding: '0 50px' }}>
-        <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
+      <Content>
+        <div style={{ background: '#fff' }}>
           {children}
         </div>
       </Content>

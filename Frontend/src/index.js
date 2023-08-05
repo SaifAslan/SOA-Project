@@ -1,33 +1,20 @@
 import React from "react";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-// import 'antd/dist/antd.css';
-import ProductListPage from "./routes/Products";
 import * as ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./App.css";
-import Product from "./routes/Product";
-import Cart from "./routes/Cart";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import store from "./redux/store";
+import { Provider } from "react-redux";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <ProductListPage />,
-  },
-  { path: "/product/:productId", element: <Product /> },
-  {
-    path: "/cart",
-    element: <Cart />,
-  },
-]);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <div className="App">
-      <div className="container">
-        <RouterProvider router={router} />
-      </div>
-    </div>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );
 
