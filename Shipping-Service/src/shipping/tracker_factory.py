@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
 from shipping.base import CourierTracker
-from cmp7174 import CMP7174Tracker
-from easymail import EasyMailTracker
-from speedex import SpeedexTracker
-from usps import USPSTracker
+from shipping.cmp7174 import CMP7174Tracker
+from shipping.easymail import EasyMailTracker
+from shipping.speedex import SpeedexTracker
+from shipping.usps import USPSTracker
 
 
 class TrackerFactory(ABC):

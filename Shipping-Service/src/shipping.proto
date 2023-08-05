@@ -122,7 +122,7 @@ service Shipping {
     // starts a shipment based on the hsipment request
     rpc StartShipping (ShippingRequest) returns (Shipment) {}
     // gets an immediate update (live tracking) for a shipment and returns a new shipment update (It stores the shipment update in the database)
-    rpc TrackShippment(ShipmentTrackRequest) returns (ShipmentUpdate) {}
+    rpc TrackShipment(ShipmentTrackRequest) returns (ShipmentUpdate) {}
     // deliver a particular shipment
     rpc DeliverShipment(ShipmentUpdateRequest) returns (Shipment) {}
     //  manualy update shipment status either from teh api or the cli

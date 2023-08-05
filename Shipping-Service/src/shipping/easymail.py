@@ -1,5 +1,7 @@
-from shipping.base import TrackingResult, format_timestamp, TrackingCheckpoint,\
-                          InvalidTrackingNumber, CourierTracker
+from shipping.package import Package
+from shipping.address import Address
+from shipping.base import Shipment, format_timestamp, ShipmentCheckpoint,\
+                          InvalidShippingNumber, CourierTracker
 from bs4 import BeautifulSoup, element
 from requests import get
 from string import digits
@@ -17,7 +19,7 @@ class EasyMailTracker(CourierTracker):
         new = ''.join([i for i in str(tracking_number)
                       if i in self.allowed])
         if len(new) != 11:
-            raise InvalidTrackingNumber(
+            raise InvalidShippingNumber(
                 message='EasyMail Tracking Numbers must contain 11 digits.')
         return new
 
@@ -38,11 +40,11 @@ class EasyMailTracker(CourierTracker):
                 # The last location update on a delivered package is a hyperlink, so I need to get only the text from it
                 location = str(location.contents[0])
 
-            return TrackingCheckpoint(description, date, location, 
+            return ShipmentCheckpoint(description, date, location, 
                 format_timestamp(timestamp))
 
         updates = [parse_checkpoint(update) for update in tracking_info.find_all("tbody")[-1].contents if update != "\n"]
-        return TrackingResult(
+        return Shipment(
             courier='EasyMail',
             tracking_number=tracking_number,
             updates=updates,
@@ -61,3 +63,6 @@ class EasyMailTracker(CourierTracker):
             return self.parse_results(results, tracking_number)
         except:
             return None
+        
+    def calculate_cost(self, source: Address, target: Address, package: Package):
+        return 450.43

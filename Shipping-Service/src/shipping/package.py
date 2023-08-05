@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from typing import List
+from pydantic import BaseModel
 
-@dataclass
-class Item:
+class Item(BaseModel):
     item_id: str
     name: str
     count: int
 
 @dataclass
-class Package:
+class Package(BaseModel):
     items: List[Item]
     shape: str
     weight: float

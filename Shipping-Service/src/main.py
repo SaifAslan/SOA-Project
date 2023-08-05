@@ -8,8 +8,6 @@ import threading
 import uvicorn
 from rest_service import app
 
-
-
 def serveGRPC():
     port = "50051"
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

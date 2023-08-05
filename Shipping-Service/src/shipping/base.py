@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from pydantic import BaseModel
 from datetime import datetime
 from typing import List
 from shipping.package import Package
@@ -20,9 +20,8 @@ class InvalidShippingNumber(ValueError):
     def __init__(self, message):
         self.message = message
         super(InvalidShippingNumber, self).__init__()
-   
-@dataclass     
-class ShipmentCheckpoint:
+
+class ShipmentCheckpoint(BaseModel):
     """
     Represents a tracking checkpoint
     """
@@ -31,8 +30,7 @@ class ShipmentCheckpoint:
     datetime: str
     
     
-@dataclass
-class Shipment:
+class Shipment(BaseModel):
     """
     Represents the tracking results for a parcel
     """
@@ -40,24 +38,24 @@ class Shipment:
     tracking_number: str
     package: Package
     updates: List[ShipmentCheckpoint]
-    found:bool = field(init=False)
+    found:bool
     delivered: bool
-    last: ShipmentCheckpoint = field(init=None)
+    last: ShipmentCheckpoint
     
     
-    def __post_init__(self):
-        """
-        If the tracking results is initalized with updates
-        update the values of found, last and check if the last update has a
-        status of delivered
-        """
-        self.found = False
-        self.last = None
-        if len(self.updates) > 0:
-            self.found = True
-            self.last = sorted(self.updates, key=lambda k: k.datetime)[-1]
-            if self.last.status == DELIVERED:
-                self.delivered = True
+    # def __post_init__(self):
+    #     """
+    #     If the tracking results is initalized with updates
+    #     update the values of found, last and check if the last update has a
+    #     status of delivered
+    #     """
+    #     self.found = False
+    #     self.last = None
+    #     if len(self.updates) > 0:
+    #         self.found = True
+    #         self.last = sorted(self.updates, key=lambda k: k.datetime)[-1]
+    #         if self.last.status == DELIVERED:
+    #             self.delivered = True
                 
 class CourierTracker(ABC):
     """
