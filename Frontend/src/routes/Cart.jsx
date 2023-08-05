@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, Button, InputNumber, Row, Col } from "antd";
-import  "../styles/cart.scss";
+import "../styles/cart.scss";
 const CartPage = () => {
   // Replace with your cart data
   const [cartItems, setCartItems] = useState([
@@ -76,6 +76,9 @@ const CartPage = () => {
           </div>
         </Col>
       </Row>
+      {/* <Routes>
+        <Route path="/checkout" Component={<h1>bhfjehfj</h1>} />
+      </Routes> */}
     </div>
   );
 };

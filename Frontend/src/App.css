@@ -3,7 +3,11 @@
   align-items: center;
 }
 .container{
-  padding: 0 5%;
+  padding: 20px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .App-logo {
