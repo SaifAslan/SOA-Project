@@ -5,10 +5,15 @@ input:
     userName (not empty)
     password (not empty)
 output:
-    "True"/"False"
+    address
+    email
+    mobileNumber
+    userID
+    userName
+    userType
 
 To run the app (should not be required as it should be covered by docker as per my understanding):
 1- create python virtual environment (using command palete in vs code)
 2- check requirements.txt file for required Flask and Flask-Restful modules (use "pip install" command)
 3- navigate to the "api" folder
-4- run "python -m flask run -p 6000" in terminal
+4- run "python -m flask run -p 8000" in terminal

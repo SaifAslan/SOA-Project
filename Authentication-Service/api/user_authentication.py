@@ -28,7 +28,7 @@ def authenticate_user():
 def check_user_credentials(user_name, password):
     user = {}
     try:
-        response = requests.get(f"http://127.0.0.1:5000/getuser/{user_name}")
+        response = requests.get(f"http://127.0.0.1:7000/getuser/{user_name}")
         user_details = json.loads(response.text)
         logging.debug(user_details)
         if user_details and check_password(password, user_details["password"]):
