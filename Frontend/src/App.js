@@ -10,6 +10,7 @@ import Checkout from "./routes/Checkout";
 // import Strip from "./routes/strip";
 
 function App() {
+
   return (
     <div className="App">
       <AppLayout>
