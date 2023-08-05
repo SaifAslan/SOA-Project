@@ -26,20 +26,25 @@ def authenticate_user():
 
 
 def check_user_credentials(user_name, password):
-    is_authenticated = "False"
+    user = {}
     try:
         response = requests.get(f"http://127.0.0.1:5000/getuser/{user_name}")
         user_details = json.loads(response.text)
         logging.debug(user_details)
         if user_details and check_password(password, user_details["password"]):
-            is_authenticated = "True"
+            user["userID"] = user_details["userID"]
+            user["userName"] = user_details["userName"]
+            user["email"] = user_details["email"]
+            user["mobileNumber"] = user_details["mobileNumber"]
+            user["address"] = user_details["address"]
+            user["userType"] = user_details["userType"]
             logging.debug(f"{user_name} was authenticated successfully")
         else:
             logging.debug("Incorrect credentials")
     except Exception as e:
         logging.exception("Exception occured while checking user credentials", str(e))
     finally:
-        return is_authenticated
+        return user
 
 
 def check_password(receied_password, hashed_password):
