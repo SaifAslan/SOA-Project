@@ -3,7 +3,7 @@ FROM python:3.9.10-alpine as base
 RUN mkdir /svc
 WORKDIR /svc
 
-COPY src/req/requirements.txt .
+COPY requirements.txt .
 
 RUN rm -rf /var/cache/apk/* && \
     rm -rf /tmp/*
