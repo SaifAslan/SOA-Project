@@ -66,10 +66,12 @@ def trackShipment(shipment_id: str):
     shipment = shippingService.trackShippment(shipment_id)
     return shipment
 
+
 @app.get("/deliverShipment/{shipment_id}")
 def deliverShipment(shipment_id: str):
     shipment = shippingService.deliverShipment(shipment_id)
     return shipment
+
 
 @app.post("/updateShipmentStatus/{shipment_id}")
 def updateShipmentStatus(shipment_id:str):
@@ -79,7 +81,7 @@ def updateShipmentStatus(shipment_id:str):
 @app.get("/getAllCouriers")
 def getAllCouriers():
     couriers = shippingService.getAllCouriers()
-    return couriers
+    return {"couriers": couriers}
 
 @app.get("/getShipmentInformation/{shipment_id}")
 def getShipmentInformation(shipment_id:str):

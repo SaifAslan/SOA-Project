@@ -34,6 +34,7 @@ class Shipment(BaseModel):
     """
     Represents the tracking results for a parcel
     """
+    shipment_id: str
     courier: str
     tracking_number: str
     package: Package
