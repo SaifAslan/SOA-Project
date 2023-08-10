@@ -1,5 +1,4 @@
 from concurrent import futures
-import logging
 from shipping.base import Shipment
 
 import grpc
@@ -27,6 +26,7 @@ def from_grpc_package_to_pydantic_package(package):
     )
     return pydantic_package
 
+
 def from_pydantic_package_to_grpc_package(package):
     items = []
     for item in package.items:
@@ -41,6 +41,7 @@ def from_pydantic_package_to_grpc_package(package):
     )
     return grpc_package
 
+
 def from_grpc_address_to_pydantic_address(address):
     pydantic_address = Address(
         state=address.state,
@@ -51,13 +52,15 @@ def from_grpc_address_to_pydantic_address(address):
     )
     return pydantic_address
 
+
 def from_pydantic_address_to_grpc_address(address):
     grpc_address = shipping_pb2.Address(state=address.state,
-                                   city=address.city,
-                                   zip=address.zip,
-                                   street=address.street,
-                                   delivery_point=address.delivery_point)
+                                        city=address.city,
+                                        zip=address.zip,
+                                        street=address.street,
+                                        delivery_point=address.delivery_point)
     return grpc_address
+
 
 def from_grpc_item_to_pydantic_item(item):
     pydantic_item = Item(
@@ -67,6 +70,7 @@ def from_grpc_item_to_pydantic_item(item):
     )
     return pydantic_item
 
+
 def from_pydantic_item_to_grpc_item(item):
     grpc_item = shipping_pb2.Item(
         item_id=item.item_id,
@@ -75,7 +79,8 @@ def from_pydantic_item_to_grpc_item(item):
     )
     return grpc_item
 
-def from_pydantic_shipment_to_grpc_shipment(shipment:Shipment):
+
+def from_pydantic_shipment_to_grpc_shipment(shipment: Shipment):
     grpc_shipment = shipping_pb2.Shipment(
         shipment_id=shipment.shipment_id,
         user_id="testing",
@@ -83,31 +88,42 @@ def from_pydantic_shipment_to_grpc_shipment(shipment:Shipment):
         updates=shipment.updates,
         found=shipment.found,
         delivered=shipment.delivered,
-        last = shipment.last,
+        last=shipment.last,
         package=shipment.package
     )
     return grpc_shipment
 
+
 class ShippingGRPCService(shipping_pb2_grpc.ShippingServicer):
     def CalculateShippingCost(self, request, context):
-        pydantic_package = from_grpc_package_to_pydantic_package(request.package)
-        pydantic_source = from_grpc_address_to_pydantic_address(request.source)
-        pydantic_destination = from_grpc_address_to_pydantic_address(request.destination)
-        courier =  request.courier
-        
-        amount = shippingService.calculateShippingCost(courier, pydantic_package, pydantic_source, pydantic_destination)
+        pydantic_package = from_grpc_package_to_pydantic_package(
+            request.package)
+        pydantic_source = from_grpc_address_to_pydantic_address(
+            request.source)
+        pydantic_destination = from_grpc_address_to_pydantic_address(
+            request.destination)
+        courier = request.courier
+
+        amount = shippingService.calculateShippingCost(courier,
+                                                       pydantic_package,
+                                                       pydantic_source,
+                                                       pydantic_destination)
         response = shipping_pb2.EstimateShipmentCostResponse(amount, 0)
         return response
-    
+
     def CalculateShippingCostNoCourier(self, request, context):
-        pydantic_package = from_grpc_package_to_pydantic_package(request.package)
-        pydantic_source = from_grpc_address_to_pydantic_address(request.source)
-        pydantic_destination = from_grpc_address_to_pydantic_address(request.destination)
-        
-        amount = shippingService.calculateShippingCostNoCourier(pydantic_package, pydantic_source, pydantic_destination)
+        pydantic_package = from_grpc_package_to_pydantic_package(
+            request.package)
+        pydantic_source = from_grpc_address_to_pydantic_address(
+            request.source)
+        pydantic_destination = from_grpc_address_to_pydantic_address(
+            request.destination)
+
+        amount = shippingService.calculateShippingCostNoCourier(
+            pydantic_package, pydantic_source, pydantic_destination)
         response = shipping_pb2.EstimateShipmentCostResponse(amount, 0)
         return response
-    
+
     def CreatePackage(self, request, context):
         items = []
         for item in request.items:
@@ -115,41 +131,56 @@ class ShippingGRPCService(shipping_pb2_grpc.ShippingServicer):
         package = shippingService.createPackage(items)
         response = from_pydantic_package_to_grpc_package(package)
         return response
-    
+
     def StartShipping(self, request, context):
         package = from_grpc_package_to_pydantic_package(request.package)
-        source = from_grpc_address_to_pydantic_address(request.source)
-        destination = from_grpc_address_to_pydantic_address(request.destination)
-        user_id = "testing"
+        # source = from_grpc_address_to_pydantic_address(request.source)
+        # destination = from_grpc_address_to_pydantic_address(
+        #     request.destination)
+        # user_id = "testing"
         courier = request.courier
         shipment = shippingService.startShipping(courier, package)
         response = from_pydantic_shipment_to_grpc_shipment(shipment)
         return response
-    
+
     def TrackShippment(self, request, context):
         shipping_id = request.shipping_id
         shipment = shippingService.trackShippment(shipping_id)
         response = from_pydantic_shipment_to_grpc_shipment(shipment)
         return response
-    
+
     def DeliverShipment(self, request, context):
         shipment_id = request.shipment_id
         shipment = shippingService.deliverShipment(shipment_id)
         response = from_pydantic_shipment_to_grpc_shipment(shipment)
         return response
-    
+
     def UpdateShipmentStatus(self, request, context):
         return super().UpdateShipmentStatus(request, context)
-    
+
     def GetAllCouriers(self, request, context):
         couriers = shippingService.getAllCouriers()
         response = shipping_pb2.CourierListResponse(couriers=couriers)
         return response
-    
+
     def GetShipmentInformation(self, request, context):
         shipment_id = request.shipment_id
         shipment = shippingService.getShipmentInformation(shipment_id)
         response = from_pydantic_shipment_to_grpc_shipment(shipment)
         return response
-    
-    
+
+
+def serveGRPC():
+    print("Starting GRPC Server")
+    port = "50051"
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    shipping_pb2_grpc.add_ShippingServicer_to_server(ShippingGRPCService(),
+                                                     server)
+    server.add_insecure_port("[::]:" + port)
+    server.start()
+    print("GRPC Server started, listening on ", port)
+    server.wait_for_termination()
+
+
+if __name__ == "__main__":
+    serveGRPC()

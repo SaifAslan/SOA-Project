@@ -53,4 +53,4 @@ EXPOSE 8000
 
 COPY . .
 
-CMD ["python", "src/main.py"]
+CMD ["bash", "run.sh"]
