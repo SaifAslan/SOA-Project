@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { Card, Button, InputNumber, Row, Col } from "antd";
 import "../styles/cart.scss";
+import { useNavigate } from "react-router-dom";
 const CartPage = () => {
   // Replace with your cart data
+  const navigate = useNavigate();
+
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "Product 1", price: 10.99, quantity: 2 },
     { id: 2, name: "Product 2", price: 19.99, quantity: 1 },
@@ -71,7 +74,7 @@ const CartPage = () => {
               <p>Subtotal: ${calculateSubtotal()}</p>
               <p>Shipping Cost: ${calculateShippingCost()}</p>
               <p>Total: ${calculateTotal()}</p>
-              <Button type="primary">Checkout</Button>
+              <Button type="primary" onClick={()=>{navigate("/checkout")}}>Checkout</Button>
             </Card>
           </div>
         </Col>
