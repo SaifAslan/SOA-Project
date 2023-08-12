@@ -1,7 +1,6 @@
 from shipping.address import Address
 from shipping.package import Package
-from shipping.base import CourierTracker, InvalidTrackingNumber, TrackingResult, \
-                          TrackingCheckpoint, format_timestamp
+from shipping.base import CourierTracker
 
 class CMP7174Tracker(CourierTracker):
     """
@@ -48,4 +47,4 @@ class CMP7174Tracker(CourierTracker):
         return self.track(tracking_number)
 
     def calculate_cost(self, source: Address, target: Address, package: Package):
-        raise 199.99
+        return 199.99

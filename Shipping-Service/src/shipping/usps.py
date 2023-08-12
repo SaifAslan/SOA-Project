@@ -1,7 +1,7 @@
 from shipping.address import Address
 from shipping.package import Package
-from shipping.base import CourierTracker, InvalidTrackingNumber, TrackingResult, \
-                          TrackingCheckpoint, format_timestamp
+from shipping.base import CourierTracker, InvalidShippingNumber, Shipment, \
+                          ShipmentCheckpoint, format_timestamp
 from requests import get
 from string import digits
 from bs4 import BeautifulSoup
@@ -47,7 +47,7 @@ class USPSTracker(CourierTracker):
         '''Attempts to sanitize the given tracking number according to Speedex format'''
         new = ''.join([i for i in str(tracking_number) if i in self.allowed])
         if len(new) != 12:
-            raise InvalidTrackingNumber(
+            raise InvalidShippingNumber(
                 message='Speedex Tracking Numbers must contain 12 digits.')
         return new
 
@@ -68,17 +68,17 @@ class USPSTracker(CourierTracker):
             location = items[0]
             description = checkpoint.find("h4", {"class": "card-title"}).contents[0].text
 
-            return TrackingCheckpoint(description, date, location, format_timestamp(timestamp))
+            return ShipmentCheckpoint(description, date, location, format_timestamp(timestamp))
 
         tracking_number = tracking_info.find(attrs={"id": "TxtConsignmentNumber"}).get('value')
 
         if tracking_info.find("div", {"class": "alert-warning"}):
-            return TrackingResult('Speedex', tracking_number, [], False)
+            return Shipment('Speedex', tracking_number, [], False)
 
         package = tracking_info.find_all("div", {"class": "timeline-card"})
         delivered = package[-1].find("h4", {"class": "card-title"}).contents[0].text == "Η ΑΠΟΣΤΟΛΗ ΠΑΡΑΔΟΘΗΚΕ"
         updates = [parse_checkpoint(update) for update in package]
-        return TrackingResult('Speedex', tracking_number, updates, delivered)
+        return Shipment('Speedex', tracking_number, updates, delivered)
 
 
     def track(self, tracking_number: str):
@@ -104,7 +104,7 @@ class USPSTracker(CourierTracker):
         raw_events.extend(track_info.findall('TrackDetail'))
 
         # Create the TrackingResponse and TrackingEvents
-        response = TrackingResult('USPS', tracking_number, [], [])
+        response = Shipment('USPS', tracking_number, [], [])
         # for event in raw_events:
         #     response.add(
         #         TrackingEvent(

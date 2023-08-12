@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from pydantic import BaseModel
 from datetime import datetime
 from typing import List
 from shipping.package import Package
@@ -12,17 +12,16 @@ def format_timestamp(input_date:datetime):
 
 DELIVERED = 'delivered'
 
-class InvalidTrackingNumber(ValueError):
+class InvalidShippingNumber(ValueError):
     '''
     This is an error that is thrown wnen an invalid tracking number
     is provided
     '''
     def __init__(self, message):
         self.message = message
-        super(InvalidTrackingNumber, self).__init__()
-   
-@dataclass     
-class TrackingCheckpoint:
+        super(InvalidShippingNumber, self).__init__()
+
+class ShipmentCheckpoint(BaseModel):
     """
     Represents a tracking checkpoint
     """
@@ -31,32 +30,33 @@ class TrackingCheckpoint:
     datetime: str
     
     
-@dataclass
-class TrackingResult:
+class Shipment(BaseModel):
     """
     Represents the tracking results for a parcel
     """
+    shipment_id: str
     courier: str
     tracking_number: str
-    updates: List[TrackingCheckpoint]
-    found:bool = field(init=False)
+    package: Package
+    updates: List[ShipmentCheckpoint]
+    found:bool
     delivered: bool
-    last: TrackingCheckpoint = field(init=None)
+    last: ShipmentCheckpoint
     
     
-    def __post_init__(self):
-        """
-        If the tracking results is initalized with updates
-        update the values of found, last and check if the last update has a
-        status of delivered
-        """
-        self.found = False
-        self.last = None
-        if len(self.updates) > 0:
-            self.found = True
-            self.last = sorted(self.updates, key=lambda k: k.datetime)[-1]
-            if self.last.status == DELIVERED:
-                self.delivered = True
+    # def __post_init__(self):
+    #     """
+    #     If the tracking results is initalized with updates
+    #     update the values of found, last and check if the last update has a
+    #     status of delivered
+    #     """
+    #     self.found = False
+    #     self.last = None
+    #     if len(self.updates) > 0:
+    #         self.found = True
+    #         self.last = sorted(self.updates, key=lambda k: k.datetime)[-1]
+    #         if self.last.status == DELIVERED:
+    #             self.delivered = True
                 
 class CourierTracker(ABC):
     """
