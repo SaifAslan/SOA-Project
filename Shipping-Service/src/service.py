@@ -75,7 +75,7 @@ class ShippingService:
         updateShipment(shipment_id, shipment)
         return shipment
     
-    def getAllCouriers():
+    def getAllCouriers(self):
         return get_all_supported_couriers()
     
     def getShipmentInformation(self, shipment_id):
