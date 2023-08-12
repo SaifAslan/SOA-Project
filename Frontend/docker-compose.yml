@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+ app: 
+  container_name: soa-frontend-c 
+  image: soa-frontend-i
+  build:
+   context: .
+  ports:
+   - 8080:80
