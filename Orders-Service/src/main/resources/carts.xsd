@@ -19,16 +19,53 @@
         </xs:complexType>
     </xs:element>
 
+    <!--    Xsd to get the cart data-->
+
+    <xs:element name="getCartByStatusRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="status" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getCartByStatusResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="cartData" type="tns:CartData" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getCartByUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="status" type="xs:string" minOccurs="0"/>
+                <xs:element name="user_id" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getCartByUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="cartData" type="tns:CartData" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
 
 
     <!-- Define complex type for the cart data -->
     <xs:complexType name="CartData">
         <xs:sequence>
             <!-- The cartId or any other unique identifier for the cart (optional) -->
-            <xs:element name="cartId" type="xs:string" minOccurs="0"/>
+            <xs:element name="cartId" type="xs:long" minOccurs="0"/>
             <!-- Elements representing user details, if needed (optional) -->
             <xs:element name="userId" type="xs:string" minOccurs="0"/>
             <!-- Repeating element for cart items -->
+            <xs:element name="status" type="xs:string" minOccurs="0"/>
+
             <xs:element name="cartItem" type="tns:CartItem" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>

@@ -13,5 +13,7 @@ public class Carts {
     @Column(name = "cart_id")
     private long cart_id;
     @Column(name = "user_id", nullable = false)
-    private String user_id;
+    private String userId;
+    @Column(name = "status", nullable = false)
+    private String status;
 }
