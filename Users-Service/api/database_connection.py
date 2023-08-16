@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 import logging
 import sqlite3
 import bcrypt
 
-app = Flask("UserRegistrationAPI")
+app = Flask("UsersAPI")
+CORS(app)
 
 # allow logging to include debug level messages
 logging.basicConfig(level=logging.DEBUG)
