@@ -3,9 +3,7 @@ version: '3'
 # Once you use the Network tag and put both the containers on the same network you will use the internal ports not the public one cause you have created a bridge
 services:
   backend:
-     build:
-       context: .
-       dockerfile: Dockerfile
+     image: hassanharoon/order-service-soacourse:v1.0
      container_name: springsoapapi
      ports:
        - "8080:8080"
