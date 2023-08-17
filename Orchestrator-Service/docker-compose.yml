@@ -1,0 +1,82 @@
+version: '3'
+
+# Once you use the Network tag and put both the containers on the same network you will use the internal ports not the public one cause you have created a bridge
+services:
+  orderspostgresdb:
+    image: postgres:15.2
+    container_name: orders_postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: SOACourse
+    networks:
+      - ordersdbnetwork
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.txt
+      - ./pgdata:/var/lib/postgresql/data
+    restart: always
+    ports:
+      - "5431:5432"
+
+  shippingmongodb:
+    image: mongo
+    container_name: shipping_mongo_container
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: examplepassword
+    networks:
+      - shippingdbnetwork
+    restart: always
+
+  shipping:
+    image: kositherocket/shipping-service
+    container_name: shipping_service_container
+    ports:
+      - "9000:9000"
+      - "50051:50051"
+    depends_on:
+       - shippingmongodb
+    environment:
+      MONGODB_HOST: shippingmongodb
+    networks:
+      - shippingdbnetwork
+      - servicecommunication
+    restart: always
+
+  orders:
+     image: hassanharoon/order-service-soacourse:v1.0
+     container_name: orders_service_container
+     ports:
+       - "8080:8080"
+     environment:
+       db-url: jdbc:postgresql://orderspostgresdb:5432/SOACourse
+       db-username: postgres
+       db-password: postgres
+     depends_on:
+       - orderspostgresdb
+     networks:
+       - ordersdbnetwork
+       - servicecommunication
+     restart: always
+  
+  orchestrator:
+    image: kositherocket/orchestratorservice
+    container_name: orchestrator_service_container
+    ports:
+      - "5001:5001"
+    depends_on:
+      - orders
+      - shipping
+    networks:
+      - servicecommunication
+    restart: always
+
+networks:
+  servicecommunication:
+    driver: bridge
+  ordersdbnetwork:
+    driver: bridge
+  shippingdbnetwork:
+    driver: bridge

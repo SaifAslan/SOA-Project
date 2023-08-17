@@ -75,6 +75,7 @@
     <xs:complexType name="CartItem">
         <xs:sequence>
             <xs:element name="productId" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
             <xs:element name="quantity" type="xs:int"/>
             <xs:element name="amount" type="xs:double"/>
             <!-- Add any other relevant elements for each item in the cart -->
@@ -161,7 +162,7 @@
   </wsdl:binding>
   <wsdl:service name="CartEndpointService">
     <wsdl:port binding="tns:CartEndpointSoap11" name="CartEndpointSoap11">
-      <soap:address location="http://localhost:8080/ws"/>
+      <soap:address location="http://orders:8080/ws"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

@@ -97,7 +97,7 @@ def from_grpc_shipment_to_obj_shipment(shipment):
 
 class ShippingService():
     def __init__(self):
-        self.port = 'localhost:50051'
+        self.port = 'shipping:50051'
 
     def calculateShippingCost(self, courier, package,
                               source, destination):
