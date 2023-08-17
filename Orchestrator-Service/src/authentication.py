@@ -2,8 +2,8 @@ import requests
 
 
 class AuthenticationServicee():
-    def __init__():
+    def __init__(self):
         pass
 
-    def authenticateUser():
+    def authenticateUser(self):
         pass

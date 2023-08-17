@@ -2,11 +2,11 @@ import requests
 
 
 class UserService():
-    def __init__():
+    def __init__(self):
         pass
 
-    def addUser():
+    def addUser(self):
         pass
 
-    def getUser():
+    def getUser(self):
         pass

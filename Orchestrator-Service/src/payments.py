@@ -2,8 +2,8 @@ import requests
 
 
 class PaymentService():
-    def __init__():
+    def __init__(self):
         pass
 
-    def createPaymentIntent():
+    def createPaymentIntent(self):
         pass

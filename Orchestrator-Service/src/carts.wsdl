@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://spring.io/guides/gs-producing-web-service-cart" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://spring.io/guides/gs-producing-web-service-cart" targetNamespace="http://spring.io/guides/gs-producing-web-service-cart">
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://spring.io/guides/gs-producing-web-service-cart">
+
+    <xs:element name="postCartRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="CartSubmissionRequest" type="tns:CartData"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="postCartResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="CartSubmissionRequest" type="tns:CartData"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!--    Xsd to get the cart data-->
+
+    <xs:element name="getCartByStatusRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="status" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getCartByStatusResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="cartData" type="tns:CartData"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getCartByUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="status" type="xs:string"/>
+                <xs:element minOccurs="0" name="user_id" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getCartByUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="cartData" type="tns:CartData"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
+    <!-- Define complex type for the cart data -->
+    <xs:complexType name="CartData">
+        <xs:sequence>
+            <!-- The cartId or any other unique identifier for the cart (optional) -->
+            <xs:element minOccurs="0" name="cartId" type="xs:long"/>
+            <!-- Elements representing user details, if needed (optional) -->
+            <xs:element minOccurs="0" name="userId" type="xs:string"/>
+            <!-- Repeating element for cart items -->
+            <xs:element minOccurs="0" name="status" type="xs:string"/>
+
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="cartItem" type="tns:CartItem"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <!-- Define complex type for a single cart item -->
+    <xs:complexType name="CartItem">
+        <xs:sequence>
+            <xs:element name="productId" type="xs:string"/>
+            <xs:element name="quantity" type="xs:int"/>
+            <xs:element name="amount" type="xs:double"/>
+            <!-- Add any other relevant elements for each item in the cart -->
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getCartByUserRequest">
+    <wsdl:part element="tns:getCartByUserRequest" name="getCartByUserRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getCartByStatusRequest">
+    <wsdl:part element="tns:getCartByStatusRequest" name="getCartByStatusRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getCartByStatusResponse">
+    <wsdl:part element="tns:getCartByStatusResponse" name="getCartByStatusResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="postCartRequest">
+    <wsdl:part element="tns:postCartRequest" name="postCartRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getCartByUserResponse">
+    <wsdl:part element="tns:getCartByUserResponse" name="getCartByUserResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="postCartResponse">
+    <wsdl:part element="tns:postCartResponse" name="postCartResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="CartEndpoint">
+    <wsdl:operation name="getCartByUser">
+      <wsdl:input message="tns:getCartByUserRequest" name="getCartByUserRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getCartByUserResponse" name="getCartByUserResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCartByStatus">
+      <wsdl:input message="tns:getCartByStatusRequest" name="getCartByStatusRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getCartByStatusResponse" name="getCartByStatusResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="postCart">
+      <wsdl:input message="tns:postCartRequest" name="postCartRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:postCartResponse" name="postCartResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CartEndpointSoap11" type="tns:CartEndpoint">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getCartByUser">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getCartByUserRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getCartByUserResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCartByStatus">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getCartByStatusRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getCartByStatusResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="postCart">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="postCartRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="postCartResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CartEndpointService">
+    <wsdl:port binding="tns:CartEndpointSoap11" name="CartEndpointSoap11">
+      <soap:address location="http://localhost:8080/ws"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
