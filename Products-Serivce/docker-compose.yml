@@ -14,10 +14,11 @@ services:
       - backend
     ports:
       - 18001:1433
+    
       
   productwebapi:
     container_name: product-api
-    image: ${DOCKER_REGISTRY-}productwebapi
+    image: ${DOCKER_REGISTRY-}buketfildisi/productwebapi
     build:
       context: .
       dockerfile: ProductWebApi/Dockerfile
@@ -25,7 +26,8 @@ services:
       - backend
     environment:
       - DB_HOST=productdb
-      - DB_NAME=ProductDB98
+      - DB_NAME=ProductDB158
       - DB_SA_PASSWORD=password@12345#
+      
     ports:
-      - 5150:5150
+      - 5150:80

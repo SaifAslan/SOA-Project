@@ -16,7 +16,7 @@ var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
 //var connectionString = $"Data Source={dbHost};Initial Catalog={dbName};TrustServerCertificate=true;Integrated Security=True";
 //var connectionString = $"Data Source={dbHost};Initial Catalog={dbName};Password={dbPassword};TrustServerCertificate=true";
 
-var connectionString = $"Data Source={dbHost};Initial Catalog={dbName};User ID=sa; Password={dbPassword};TrustServerCertificate = true" ;
+var connectionString = $"Data Source={dbHost};Initial Catalog={dbName};User ID=sa; Password={dbPassword};TrustServerCertificate=True; Integrated Security=False" ;
 
 
 builder.Services.AddDbContext<ProductDbContext>(opt => opt.UseSqlServer(connectionString));
