@@ -1,3 +1,5 @@
+from typing import List
+from pydantic import BaseModel
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,6 +35,72 @@ shippingService = ShippingService()
 userService = UserService()
 
 
+class Item(BaseModel):
+    item_id: str
+    name: str
+    count: int
+
+
+class Package(BaseModel):
+    items: List[Item]
+    shape: str
+    weight: float
+    length: float
+    width: float
+    height: float
+
+
+class Address(BaseModel):
+    """
+    A class representing the address of a user
+    """
+    state: str
+    city: str
+    zip: str
+    street: str
+    delivery_point: str
+
+
+class ShippingRequest(BaseModel):
+    package: Package
+    source: Address
+    destination: Address
+
+
+class ShippingRequestWithCourier(ShippingRequest):
+    courier: str
+
+
+class CreatePackageRequest(BaseModel):
+    items: List[Item]
+
+
+class StartShippingRequest(BaseModel):
+    order_id: str
+    user_id: str
+    courier: str
+    package: Package
+    source: Address
+    destination: Address
+
+
+class CartItem(BaseModel):
+    productId: str
+    name: str
+    quantity: int
+    amount: float
+
+
+class CartDataRequest(BaseModel):
+    cartId: str
+    cartItem: List[CartItem]
+
+
+class CartData(CartDataRequest):
+    userId: str
+    status: str = "Pending"
+
+
 @app.get("/GetProduct")
 def getProduct():
     return productService.getProduct()
@@ -53,39 +121,47 @@ def getProducts():
     return productService.getProducts()
 
 
-@app.post("/CalcualateShippingCost")
-def calculateShippingCost():
-    return shippingService.calculateShippingCost()
+@app.post("/CalculateShippingCost")
+def calculateShippingCost(sr: ShippingRequestWithCourier):
+    return shippingService.calculateShippingCost(sr.courier,
+                                                 sr.package,
+                                                 sr.source,
+                                                 sr.destination)
 
 
 @app.post("/CalculateShippingCostNoCourier")
-def calculateShippingCostNoCourier():
-    return shippingService.calculateShippingCostNoCourier()
+def calculateShippingCostNoCourier(sr: ShippingRequest):
+    return shippingService.calculateShippingCostNoCourier(sr.package,
+                                                          sr.source,
+                                                          sr.destination)
 
 
 @app.post("/CreatePackage")
-def createPackage():
-    return shippingService.createPackage()
+def createPackage(pr: CreatePackageRequest):
+    return shippingService.createPackage(pr.items)
 
 
 @app.post("/StartShipping")
-def startShipping():
-    return shippingService.startShipping()
+def startShipping(ssr: StartShippingRequest):
+    return shippingService.startShipping(ssr.order_id, ssr.courier,
+                                         ssr.package, ssr.user_id,
+                                         ssr.source, ssr.destination)
 
 
-@app.post("/TrakcShipment")
-def trackShipment():
-    return shippingService.trackShipment()
+@app.get("/TrackShipment/{shipment_id}")
+def trackShipment(shipment_id: str):
+    return shippingService.trackShipment(shipment_id)
 
 
-@app.get("/TrackShipment")
-def delivereShipment():
-    return shippingService.deliverShipment()
+@app.get("/DeliverShipment/{shipment_id}")
+def delivereShipment(shipment_id: str):
+    return shippingService.deliverShipment(shipment_id, "none", "none", "none")
 
 
-@app.put("/UpdateShipmentStatus")
-def updateShipmentStatus():
-    return shippingService.updateShipmentStatus()
+@app.put("/UpdateShipmentStatus/{shipment_id}")
+def updateShipmentStatus(shipment_id: str):
+    return shippingService.updateShipmentStatus(shipment_id, "none",
+                                                "none", "none")
 
 
 @app.get("/GetAllCouriers")
@@ -93,9 +169,14 @@ def getAllCouriers():
     return shippingService.getAllCouriers()
 
 
-@app.get("/GetShipmentInformation")
-def getShipmentInformation():
-    return shippingService.getShipmentInformation()
+@app.get("/GetShipmentInformation/{shipment_id}")
+def getShipmentInformation(shipment_id: str):
+    return shippingService.getShipmentInformation(shipment_id)
+
+
+@app.get("/GetAllShipments")
+def getAllShipmentInformation(user_id: str = None, courier: str = None):
+    return shippingService.getAllShipmentInformation(user_id, courier)
 
 
 @app.get("/InitializePyament")
@@ -124,18 +205,19 @@ def checkService():
 
 
 @app.post("/PostCartRequest")
-def postCartRequest():
-    return ordersService.postCartRequest()
+def postCartRequest(cartData: CartDataRequest):
+    cartData = cartData.dict()
+    return ordersService.postCartRequest(cartData)
 
 
-@app.get("/GetCartRequest/{id}")
-def getCartRequest():
-    return ordersService.getCartRequest()
+@app.get("/GetCartRequest/{user_id}/{status}")
+def getCartRequest(user_id: str, status: str):
+    return ordersService.getCartRequest(user_id, status)
 
 
-@app.post("/PostCartStatusRequest")
-def postCartStatusRequest():
-    return ordersService.postCartRequest()
+@app.post("/PostCartStatusRequest/{status}")
+def postCartStatusRequest(status: str):
+    return ordersService.postCartRequest(status)
 
 
 def serveHTTP():

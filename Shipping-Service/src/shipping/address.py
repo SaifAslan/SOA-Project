@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class Address(BaseModel):
     """
     A class representing the address of a user

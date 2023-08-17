@@ -2,17 +2,17 @@ import requests
 
 
 class ProductService():
-    def __init__():
+    def __init__(self):
         pass
 
-    def getProducts():
+    def getProducts(self):
         pass
 
-    def putProduts():
+    def putProduts(self):
         pass
 
-    def getProduct():
+    def getProduct(self):
         pass
 
-    def postProducts():
+    def postProducts(self):
         pass
