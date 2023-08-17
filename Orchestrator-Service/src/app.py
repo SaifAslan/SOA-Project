@@ -3,12 +3,10 @@ from pydantic import BaseModel
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from authentication import AuthenticationServicee
 from orders import OrdersService
-from payments import PaymentService
-from products import ProductService
 from shipping import ShippingService
-from users import UserService
+import random
+
 
 # from pydantic import BaseModel
 
@@ -27,12 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-authenticationService = AuthenticationServicee()
 ordersService = OrdersService()
-paymentService = PaymentService()
-productService = ProductService()
 shippingService = ShippingService()
-userService = UserService()
 
 
 class Item(BaseModel):
@@ -62,13 +56,12 @@ class Address(BaseModel):
 
 
 class ShippingRequest(BaseModel):
-    package: Package
     source: Address
     destination: Address
 
 
-class ShippingRequestWithCourier(ShippingRequest):
-    courier: str
+class ShippingRequestWithItems(ShippingRequest):
+    items: List[Item]
 
 
 class CreatePackageRequest(BaseModel):
@@ -76,9 +69,6 @@ class CreatePackageRequest(BaseModel):
 
 
 class StartShippingRequest(BaseModel):
-    order_id: str
-    user_id: str
-    courier: str
     package: Package
     source: Address
     destination: Address
@@ -92,45 +82,32 @@ class CartItem(BaseModel):
 
 
 class CartDataRequest(BaseModel):
-    cartId: str
+    userId: str
     cartItem: List[CartItem]
 
 
 class CartData(CartDataRequest):
-    userId: str
+    cartId: str
     status: str = "Pending"
 
 
-@app.get("/GetProduct")
-def getProduct():
-    return productService.getProduct()
-
-
-@app.put("/UpdateProduct")
-def updateProduct():
-    return productService.putProduts()
-
-
-@app.post("/AddProduct")
-def addProduct():
-    return productService.postProducts()
-
-
-@app.get("/GetProduct/{id}/")
-def getProducts():
-    return productService.getProducts()
-
-
-@app.post("/CalculateShippingCost")
-def calculateShippingCost(sr: ShippingRequestWithCourier):
-    return shippingService.calculateShippingCost(sr.courier,
-                                                 sr.package,
-                                                 sr.source,
-                                                 sr.destination)
+def get_random_id():
+    # choose from all lowercase letter
+    letters = ["1", "2", "3", "4", "5", "6",
+               "7", "8", "9", "0"]
+    result_str = ''.join(random.choice(letters) for i in range(5))
+    return int(result_str)
 
 
 @app.post("/CalculateShippingCostNoCourier")
-def calculateShippingCostNoCourier(sr: ShippingRequest):
+def calculateShippingCostNoCourier(sr: ShippingRequestWithItems):
+    cpr = CreatePackageRequest(items=sr.items)
+    package = createPackage(cpr)
+    del package["items"]
+    package = Package(
+        items=sr.items,
+        **package
+    )
     return shippingService.calculateShippingCostNoCourier(sr.package,
                                                           sr.source,
                                                           sr.destination)
@@ -141,27 +118,64 @@ def createPackage(pr: CreatePackageRequest):
     return shippingService.createPackage(pr.items)
 
 
-@app.post("/StartShipping")
-def startShipping(ssr: StartShippingRequest):
-    return shippingService.startShipping(ssr.order_id, ssr.courier,
-                                         ssr.package, ssr.user_id,
-                                         ssr.source, ssr.destination)
+@app.post("/CreateOrder")
+def postCartRequest(cartData: CartDataRequest):
+    cartData = cartData.dict()
+    cartData["cartId"] = get_random_id()
+    cartData["Status"] = "Pending"
+    return ordersService.postCartRequest(cartData)
 
 
-@app.get("/TrackShipment/{shipment_id}")
-def trackShipment(shipment_id: str):
-    return shippingService.trackShipment(shipment_id)
+@app.post("/StartShipping/{order_id}")
+def startShipping(order_id: str, ssr: ShippingRequest):
+    order = ordersService.getCartById(order_id)
+    if order is None:
+        return "Failed to create order"
+    userId = order["userId"]
+    orderId = str(order["cartId"])
+    courier = "cmp7174"
+    cartItems = order["cartItem"]
+    shipmentItems = []
+    for cartItem in cartItems:
+        item = Item(
+            item_id=cartItem["productId"],
+            name=cartItem["name"],
+            count=cartItem["quantity"]
+        )
+        shipmentItems.append(item)
+    cpr = CreatePackageRequest(items=shipmentItems)
+    package = createPackage(cpr)
+    del package["items"]
+    package = Package(
+        items=shipmentItems,
+        **package
+    )
+    shipment = shippingService.startShipping(orderId, courier,
+                                             package, userId,
+                                             ssr.source, ssr.destination)
+    order["shipment"] = shipment
+    return order
 
 
-@app.get("/DeliverShipment/{shipment_id}")
-def delivereShipment(shipment_id: str):
-    return shippingService.deliverShipment(shipment_id, "none", "none", "none")
+@app.get("/TrackOrder/{order_id}")
+def trackShipment(order_id: str):
+    order = ordersService.getCartById(order_id)
+    if order is None:
+        return "Failed to findl order"
+    shipment = shippingService.trackShipment(str(order["cartId"]))
+    order["shipment"] = shipment
+    return order
 
 
-@app.put("/UpdateShipmentStatus/{shipment_id}")
-def updateShipmentStatus(shipment_id: str):
-    return shippingService.updateShipmentStatus(shipment_id, "none",
-                                                "none", "none")
+@app.get("/DeliverOrder/{order_id}")
+def delivereShipment(order_id: str):
+    order = ordersService.getCartById(order_id)
+    if order is None:
+        return "Failed to findl order"
+    shipment = shippingService.deliverShipment(str(order["cartId"]), "none",
+                                               "none", "none")
+    order["shipment"] = shipment
+    return order
 
 
 @app.get("/GetAllCouriers")
@@ -169,45 +183,29 @@ def getAllCouriers():
     return shippingService.getAllCouriers()
 
 
-@app.get("/GetShipmentInformation/{shipment_id}")
-def getShipmentInformation(shipment_id: str):
-    return shippingService.getShipmentInformation(shipment_id)
+@app.get("/GetOrderInformation/{ordr_id}")
+def getShipmentInformation(order_id: str):
+    order = ordersService.getCartById(order_id)
+    if order is None:
+        return "Failed to findl order"
+    shipment = shippingService.getShipmentInformation(str(order["cartId"]))
+    order["shipment"] = shipment
+    return order
 
 
 @app.get("/GetAllShipments")
-def getAllShipmentInformation(user_id: str = None, courier: str = None):
-    return shippingService.getAllShipmentInformation(user_id, courier)
-
-
-@app.get("/InitializePyament")
-def initializePayment():
-    return paymentService.createPaymentIntent()
-
-
-@app.post("/AddUser")
-def addUser():
-    return userService.addUser()
-
-
-@app.get("/GetUser/{id}")
-def getUser():
-    return userService.getUser()
-
-
-@app.post("/AuthenticateUser")
-def authenticationUser():
-    return authenticationService.authenticateUser()
+def getAllShipmentInformation(user_id: str = None):
+    courier = "cmp7174"
+    orders = ordersService.getCartRequest("", user_id)
+    for order in orders:
+        order["shipment"] = shippingService.getAllShipmentInformation(
+                                        str(order["cartId"]), courier)
+    return orders
 
 
 @app.get("/CheckService/{service_name}")
 def checkService():
     return "handle checking if a particular servcie is active"
-
-
-@app.post("/PostCartRequest")
-def postCartRequest(cartData: CartDataRequest):
-    cartData = cartData.dict()
-    return ordersService.postCartRequest(cartData)
 
 
 @app.get("/GetCartRequest/{user_id}/{status}")
@@ -222,7 +220,7 @@ def postCartStatusRequest(status: str):
 
 def serveHTTP():
     print("Starting HTTP Server")
-    port = 8000
+    port = 5001
     host = "0.0.0.0"
     print("HTTP Server started, listening on ", port)
     uvicorn.run(app, host=host, port=port)

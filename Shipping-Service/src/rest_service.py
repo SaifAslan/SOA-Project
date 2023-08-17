@@ -121,7 +121,7 @@ def getAllShipmentInformation(user_id: str = None, courier: str = None):
 
 def serveHTTP():
     print("Starting HTTP Server")
-    port = 8000
+    port = 9000
     host = "0.0.0.0"
     print("HTTP Server started, listening on ", port)
     uvicorn.run(app, host=host, port=port)

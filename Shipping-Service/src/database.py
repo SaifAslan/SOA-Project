@@ -1,9 +1,10 @@
 from pymongo import MongoClient
+import os
 # from typing import Any, List, Optional
 # from pydantic import BaseModel, Field, Json
 
 
-MONGODB_HOST = 'localhost'
+MONGODB_HOST = os.environ.get("MONGODB_HOST", 'localhost')
 MONGODB_PORT = 27017
 DB_NAME = 'cmp7174ecommerce'
 COLLECTION_NAME = 'shipment'
