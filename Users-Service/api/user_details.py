@@ -1,12 +1,31 @@
-import json
+from flask_restful import reqparse
+from database_connection import (
+    connect_to_databse,
+    app,
+    bcrypt,
+    sqlite3,
+    logging,
+)
 
-from database_connection import connect_to_databse, app, sqlite3, logging
+
+# initialize request parser that will be used in user creation
+parser = reqparse.RequestParser()
+parser.add_argument("userName", required=True)
+parser.add_argument("password", required=True)
 
 
-@app.route("/getuser/<user_name>", methods=["GET"])
-def get_user(user_name):
+@app.route("/authenticateuser", methods=["POST"])
+def authenticate_user():
+    args = parser.parse_args()
+    user_name = args["userName"]
+    password = args["password"]
+    return check_user_credentials(user_name, password)
+
+
+def check_user_credentials(user_name, password):
     user = {}
     connection = connect_to_databse()
+    is_error = False
     try:
         # include columns in query result
         connection.row_factory = sqlite3.Row
@@ -16,20 +35,39 @@ def get_user(user_name):
         cursor.execute(sql)
         row = cursor.fetchone()
         logging.debug("Query executed")
-        if not row:
-            return "Incorrect Username"
+        if row is None:
+            is_error = True
         else:
-            user["userID"] = row["user_id"]
-            user["userName"] = row["user_name"]
             user["password"] = row["password"]
-            user["email"] = row["email"]
-            user["mobileNumber"] = row["mobile_number"]
-            user["address"] = row["address"]
-            user["userType"] = row["user_type"]
+            if check_password(password, user["password"]):
+                user["userID"] = row["user_id"]
+                user["userName"] = row["user_name"]
+                user["email"] = row["email"]
+                user["mobileNumber"] = row["mobile_number"]
+                user["address"] = row["address"]
+                user["userType"] = row["user_type"]
+                logging.debug(f"{user_name} was authenticated successfully")
+            else:
+                is_error = True
     except Exception as e:
-        logging.exception("Exception while executing query", str(e))
-        return "Error occured while fetching user details"
+        logging.exception("Exception occured while checking user credentials", str(e))
+        return f"Error occured while authenticating user {e}"
     finally:
-        cursor.close()
-        connection.close()
-        return user
+        return user if not is_error else "Incorrect Credentials"
+
+
+def check_password(receied_password, hashed_password):
+    is_correct = ""
+    try:
+        if receied_password:
+            # convert password to byte array
+            bytes = receied_password.encode("utf-8")
+            # convert hashed password to byte array as it can only be stored as a string representation of
+            # byte array in database
+            hashed_password = hashed_password[1:].replace("'", "").encode("utf-8")
+            # check password
+            is_correct = bcrypt.checkpw(bytes, hashed_password)
+    except Exception as e:
+        logging.exception("Exception while checking password", str(e))
+    finally:
+        return is_correct

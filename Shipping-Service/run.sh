@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 python src/grpc_service.py &
 python src/rest_service.py &
+celery -A src/celery beat — loginfo=info &
 
 while true; do
     # echo "running"

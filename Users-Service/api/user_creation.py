@@ -1,6 +1,10 @@
 from flask_restful import reqparse
-
-from database_connection import connect_to_databse, hash_password, app, logging
+from database_connection import (
+    connect_to_databse,
+    hash_password,
+    app,
+    logging,
+)
 
 
 # initialize request parser that will be used in user creation

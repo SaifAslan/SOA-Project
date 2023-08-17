@@ -12,9 +12,10 @@ output:
 "True"/"False"
 
 
-"/getuser/<user_name>" GET method:
+"/authenticateuser" POST method:
 input:
-    userName
+    userName (not empty)
+    password (not empty)
 output:
     userID
     userName
