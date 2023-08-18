@@ -36,7 +36,7 @@ mongoose
   .connect(mongodb_URI)
   .then((result) => {
     //when the connection is successful listen to the port
-    app.listen(process.env.PORT || 8080, function () {
+    app.listen(process.env.PORT || 8070, function () {
       console.log(
         "Express server listening on port %d in %s mode",
         this.address().port,
