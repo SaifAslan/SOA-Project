@@ -127,7 +127,8 @@ def postCartRequest(cartData: CartDataRequest):
 
 
 @app.post("/StartShipping/{order_id}")
-def startShipping(order_id: str, ssr: ShippingRequest):
+def startShipping(order_id: int, ssr: ShippingRequest):
+    print("The order id is ", order_id)
     order = ordersService.getCartById(order_id)
     if order is None:
         return "Failed to create order"
@@ -158,7 +159,7 @@ def startShipping(order_id: str, ssr: ShippingRequest):
 
 
 @app.get("/TrackOrder/{order_id}")
-def trackShipment(order_id: str):
+def trackShipment(order_id: int):
     order = ordersService.getCartById(order_id)
     if order is None:
         return "Failed to findl order"
@@ -168,7 +169,7 @@ def trackShipment(order_id: str):
 
 
 @app.get("/DeliverOrder/{order_id}")
-def delivereShipment(order_id: str):
+def delivereShipment(order_id: int):
     order = ordersService.getCartById(order_id)
     if order is None:
         return "Failed to findl order"
@@ -183,7 +184,7 @@ def getAllCouriers():
     return shippingService.getAllCouriers()
 
 
-@app.get("/GetOrderInformation/{ordr_id}")
+@app.get("/GetOrderInformation/{order_id}")
 def getShipmentInformation(order_id: str):
     order = ordersService.getCartById(order_id)
     if order is None:

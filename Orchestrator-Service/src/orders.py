@@ -1,11 +1,25 @@
 from zeep import Client
 
 
-def postProcessingCartItem(cartItems):
-    output = []
-    for item in cartItems:
-        output.append(item["__values__"])
-    return output
+def convert_zeep_item_to_dict(item):
+    dict_item = {
+        "productId": item["productId"],
+        "name": item["name"],
+        "quantity": item["quantity"],
+        "amount": item["amount"]
+    }
+    return dict_item
+
+
+def convert_zeep_cart_to_dict(cart):
+    dict_cart = {
+        "cartId":  cart["cartId"],
+        "userId": cart["userId"],
+        "status": cart["status"],
+        "cartItem": [convert_zeep_item_to_dict(item)
+                     for item in cart["cartItem"]]
+    }
+    return dict_cart
 
 
 class OrdersService():
@@ -13,28 +27,26 @@ class OrdersService():
         self.client = Client('carts.wsdl')
 
     def postCartRequest(self, cartData):
-        res = self.client.service.postCart(CartSubmissionRequest=cartData)
-        cartData = res["__values__"]["CartSubmissionRequest"]["__values__"]
-        cartData["cartItem"] = postProcessingCartItem(cartData["cartItem"])
+        response = self.client.service.postCart(CartSubmissionRequest=cartData)
+        print("The type of the response data is : ",
+              type(response["CartSubmissionRequest"]))
+        cartData = convert_zeep_cart_to_dict(response["CartSubmissionRequest"])
         return cartData
 
     def getCartRequest(self, status, user_id):
         response = self.client.service.getCartByUser(status=status,
                                                      user_id=user_id)
-        cartDatas = response["__values__"]["cartData"]["__values__"]
-        for cartData in cartDatas:
-            cartData["cartItem"] = postProcessingCartItem(cartData["cartItem"])
+        cartDatas = [convert_zeep_cart_to_dict(data) for data in response]
         return cartDatas
 
     def postCartStatusRequest(self, status):
         response = self.client.service.getCartByStatus(status=status)
-        cartDatas = response["__values__"]["cartData"]["__values__"]
-        for cartData in cartDatas:
-            cartData["cartItem"] = postProcessingCartItem(cartData["cartItem"])
+        cartDatas = [convert_zeep_cart_to_dict(data) for data in response]
         return cartDatas
 
     def getCartById(self, cartId):
         orders = self.postCartStatusRequest("Pending")
+        print("The orders are : ", orders)
         for order in orders:
             if order["cartId"] == cartId:
                 return order

@@ -9,6 +9,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: SOACourse
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.txt
+      - ./pgdata:/var/lib/postgresql/data
     networks:
       - ordersdbnetwork
     ports:
@@ -32,12 +35,14 @@ services:
       - "9000:9000"
       - "50051:50051"
     depends_on:
-       - shippingmongodb
+      shippingmongodb:
+        condition: service_started
     environment:
       MONGODB_HOST: shippingmongodb
     networks:
       - shippingdbnetwork
       - servicecommunication
+    restart: always
 
   orders:
      image: hassanharoon/order-service-soacourse:v1.0
@@ -49,10 +54,13 @@ services:
        db-username: postgres
        db-password: postgres
      depends_on:
-       - orderspostgresdb
+      orderspostgresdb:
+        condition: service_started
      networks:
-       - ordersdbnetwork
        - servicecommunication
+       - ordersdbnetwork
+       
+     restart: always
   
   orchestrator:
     image: kositherocket/orchestratorservice
@@ -60,10 +68,13 @@ services:
     ports:
       - "5001:5001"
     depends_on:
-      - orders
-      - shipping
+      orders:
+        condition: service_started
+      shipping:
+        condition: service_started
     networks:
       - servicecommunication
+    restart: always
 
 networks:
   servicecommunication:
