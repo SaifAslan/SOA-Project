@@ -11,10 +11,6 @@ services:
       POSTGRES_DB: SOACourse
     networks:
       - ordersdbnetwork
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.txt
-      - ./pgdata:/var/lib/postgresql/data
-    restart: always
     ports:
       - "5431:5432"
 
@@ -28,7 +24,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: examplepassword
     networks:
       - shippingdbnetwork
-    restart: always
 
   shipping:
     image: kositherocket/shipping-service
@@ -43,7 +38,6 @@ services:
     networks:
       - shippingdbnetwork
       - servicecommunication
-    restart: always
 
   orders:
      image: hassanharoon/order-service-soacourse:v1.0
@@ -59,7 +53,6 @@ services:
      networks:
        - ordersdbnetwork
        - servicecommunication
-     restart: always
   
   orchestrator:
     image: kositherocket/orchestratorservice
@@ -71,7 +64,6 @@ services:
       - shipping
     networks:
       - servicecommunication
-    restart: always
 
 networks:
   servicecommunication:

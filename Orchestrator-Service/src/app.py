@@ -108,7 +108,7 @@ def calculateShippingCostNoCourier(sr: ShippingRequestWithItems):
         items=sr.items,
         **package
     )
-    return shippingService.calculateShippingCostNoCourier(sr.package,
+    return shippingService.calculateShippingCostNoCourier(package,
                                                           sr.source,
                                                           sr.destination)
 
@@ -122,7 +122,7 @@ def createPackage(pr: CreatePackageRequest):
 def postCartRequest(cartData: CartDataRequest):
     cartData = cartData.dict()
     cartData["cartId"] = get_random_id()
-    cartData["Status"] = "Pending"
+    cartData["status"] = "Pending"
     return ordersService.postCartRequest(cartData)
 
 
