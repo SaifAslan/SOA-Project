@@ -9,14 +9,24 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: SOACourse
-    networks:
-      - ordersdbnetwork
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.txt
       - ./pgdata:/var/lib/postgresql/data
-    restart: always
+    networks:
+      - servicecommunication
     ports:
       - "5431:5432"
+
+  productdb:
+    container_name: products_mssql_container
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
+    networks:
+      - servicecommunication
+    ports:
+      - 18001:1433
 
   shippingmongodb:
     image: mongo
@@ -27,21 +37,19 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: examplepassword
     networks:
-      - shippingdbnetwork
-    restart: always
+      - servicecommunication
 
   shipping:
     image: kositherocket/shipping-service
     container_name: shipping_service_container
     ports:
-      - "9000:9000"
       - "50051:50051"
     depends_on:
-       - shippingmongodb
+      shippingmongodb:
+        condition: service_started
     environment:
       MONGODB_HOST: shippingmongodb
     networks:
-      - shippingdbnetwork
       - servicecommunication
     restart: always
 
@@ -55,11 +63,48 @@ services:
        db-username: postgres
        db-password: postgres
      depends_on:
-       - orderspostgresdb
+      orderspostgresdb:
+        condition: service_started
      networks:
-       - ordersdbnetwork
        - servicecommunication
      restart: always
+
+  products:
+    image: buketfildisi/productwebapi:latest
+    container_name: product_service_container
+    networks:
+      - servicecommunication
+    depends_on:
+      productdb:
+        condition: service_started
+    environment:
+      - DB_HOST=productdb
+      - DB_NAME=ProductDB158
+      - DB_SA_PASSWORD=password@12345#
+    ports:
+      - 5150:80
+    restart: always
+
+  payment:
+    image: saif24007/payment-service
+    container_name: payment_service_container
+    networks:
+      - servicecommunication
+    ports:
+      - "8070:8070"
+    environment:
+      - MONGODB_PASSWORD=aXaodzYRluI7SwJW
+      - STRIPE_SK=sk_test_51NMyLEEuOjFLJVPumvdQ9DSan3aZ6rQmg5mKQBDhyTRt71wvQ5ly95ac9HB5MP6c1okiKWkSidODuFnFLYPamhdO00XlsWY65R
+    restart: always
+  
+  authentication:
+    image: adhamsakr/users-service
+    container_name: authentication_service_container
+    networks:
+      - servicecommunication
+    ports:
+      - "6000:6000"
+    restart: always
   
   orchestrator:
     image: kositherocket/orchestratorservice
@@ -67,16 +112,32 @@ services:
     ports:
       - "5001:5001"
     depends_on:
-      - orders
-      - shipping
+      orders:
+        condition: service_started
+      shipping:
+        condition: service_started
+      products:
+        condition: service_started
     networks:
       - servicecommunication
     restart: always
 
+  frontend:
+    image: saif24007/soa-frontend-i
+    container_name: frontend_service_container
+    networks:
+      - servicecommunication
+    ports:
+      - "3000:3000"
+    depends_on:
+      orchestrator:
+        condition: service_started
+      products:
+        condition: service_started
+      authentication:
+        condition: service_started
+    restart: always
+
 networks:
   servicecommunication:
-    driver: bridge
-  ordersdbnetwork:
-    driver: bridge
-  shippingdbnetwork:
     driver: bridge

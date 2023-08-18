@@ -108,7 +108,7 @@ def calculateShippingCostNoCourier(sr: ShippingRequestWithItems):
         items=sr.items,
         **package
     )
-    return shippingService.calculateShippingCostNoCourier(sr.package,
+    return shippingService.calculateShippingCostNoCourier(package,
                                                           sr.source,
                                                           sr.destination)
 
@@ -122,12 +122,13 @@ def createPackage(pr: CreatePackageRequest):
 def postCartRequest(cartData: CartDataRequest):
     cartData = cartData.dict()
     cartData["cartId"] = get_random_id()
-    cartData["Status"] = "Pending"
+    cartData["status"] = "Pending"
     return ordersService.postCartRequest(cartData)
 
 
 @app.post("/StartShipping/{order_id}")
-def startShipping(order_id: str, ssr: ShippingRequest):
+def startShipping(order_id: int, ssr: ShippingRequest):
+    print("The order id is ", order_id)
     order = ordersService.getCartById(order_id)
     if order is None:
         return "Failed to create order"
@@ -158,7 +159,7 @@ def startShipping(order_id: str, ssr: ShippingRequest):
 
 
 @app.get("/TrackOrder/{order_id}")
-def trackShipment(order_id: str):
+def trackShipment(order_id: int):
     order = ordersService.getCartById(order_id)
     if order is None:
         return "Failed to findl order"
@@ -168,7 +169,7 @@ def trackShipment(order_id: str):
 
 
 @app.get("/DeliverOrder/{order_id}")
-def delivereShipment(order_id: str):
+def delivereShipment(order_id: int):
     order = ordersService.getCartById(order_id)
     if order is None:
         return "Failed to findl order"
@@ -183,8 +184,8 @@ def getAllCouriers():
     return shippingService.getAllCouriers()
 
 
-@app.get("/GetOrderInformation/{ordr_id}")
-def getShipmentInformation(order_id: str):
+@app.get("/GetOrderInformation/{order_id}")
+def getShipmentInformation(order_id: int):
     order = ordersService.getCartById(order_id)
     if order is None:
         return "Failed to findl order"
@@ -198,8 +199,8 @@ def getAllShipmentInformation(user_id: str = None):
     courier = "cmp7174"
     orders = ordersService.getCartRequest("", user_id)
     for order in orders:
-        order["shipment"] = shippingService.getAllShipmentInformation(
-                                        str(order["cartId"]), courier)
+        order["shipments"] = shippingService.getAllShipmentInformation(
+                                        str(order["userId"]), courier)
     return orders
 
 
@@ -210,12 +211,16 @@ def checkService():
 
 @app.get("/GetCartRequest/{user_id}/{status}")
 def getCartRequest(user_id: str, status: str):
-    return ordersService.getCartRequest(user_id, status)
+    courier = "cmp7174"
+    orders = ordersService.getCartRequest(status, user_id)
+    for order in orders:
+        order["shipments"] = shippingService.getAllShipmentInformation(
+                                        str(order["userId"]), courier)
+    return orders
 
-
-@app.post("/PostCartStatusRequest/{status}")
-def postCartStatusRequest(status: str):
-    return ordersService.postCartRequest(status)
+# @app.post("/PostCartStatusRequest/{status}")
+# def postCartStatusRequest(status: str):
+#     return ordersService.postCartRequest(status)
 
 
 def serveHTTP():

@@ -2,7 +2,9 @@ from pymongo import MongoClient
 import os
 # from typing import Any, List, Optional
 # from pydantic import BaseModel, Field, Json
-
+mongo_user = 'root'
+mongo_password = 'examplepassword'
+auth_db = 'admin'
 
 MONGODB_HOST = os.environ.get("MONGODB_HOST", 'localhost')
 MONGODB_PORT = 27017
@@ -10,7 +12,9 @@ DB_NAME = 'cmp7174ecommerce'
 COLLECTION_NAME = 'shipment'
 
 
-client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+client = MongoClient(host=MONGODB_HOST, port=MONGODB_PORT,
+                     username=mongo_user, password=mongo_password,
+                     authSource=auth_db)
 shippment_db = client[DB_NAME][COLLECTION_NAME]
 
 
