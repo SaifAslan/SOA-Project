@@ -42,8 +42,12 @@ class CreatePackageRequest(BaseModel):
 
 
 class StartShippingRequest(BaseModel):
+    order_id: str
+    user_id: str
     courier: str
     package: Package
+    source: Address
+    destination: Address
 
 
 # create shipping service to be used for the operations
@@ -73,13 +77,15 @@ def createPackage(pr: CreatePackageRequest):
 
 @app.post("/startShipping")
 def startShipping(ssr: StartShippingRequest):
-    shipment = shippingService.startShipping(ssr.courier, ssr.package)
+    shipment = shippingService.startShipping(ssr.order_id, ssr.courier,
+                                             ssr.package, ssr.user_id,
+                                             ssr.source, ssr.destination)
     return shipment
 
 
 @app.get("/trackShipment/{shipment_id}")
 def trackShipment(shipment_id: str):
-    shipment = shippingService.trackShippment(shipment_id)
+    shipment = shippingService.trackShipment(shipment_id)
     return shipment
 
 
@@ -91,7 +97,7 @@ def deliverShipment(shipment_id: str):
 
 @app.post("/updateShipmentStatus/{shipment_id}")
 def updateShipmentStatus(shipment_id: str):
-    shipment = shippingService.updateShipmentStatus(shipment_id)
+    shipment = shippingService.updateShipmentStatus(shipment_id, {})
     return shipment
 
 
@@ -107,9 +113,15 @@ def getShipmentInformation(shipment_id: str):
     return shipment
 
 
+@app.get("/getAllShipments")
+def getAllShipmentInformation(user_id: str = None, courier: str = None):
+    shipments = shippingService.getAllShipments(user_id, courier)
+    return shipments
+
+
 def serveHTTP():
     print("Starting HTTP Server")
-    port = 8000
+    port = 9000
     host = "0.0.0.0"
     print("HTTP Server started, listening on ", port)
     uvicorn.run(app, host=host, port=port)

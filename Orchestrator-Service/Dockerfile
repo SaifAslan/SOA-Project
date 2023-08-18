@@ -9,9 +9,9 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-EXPOSE 8000
-EXPOSE 50051
+EXPOSE 6000
 
 COPY . .
+COPY src/carts.wsdl .
 
-CMD ["bash", "run.sh"]
+CMD ["python", "src/app.py"]

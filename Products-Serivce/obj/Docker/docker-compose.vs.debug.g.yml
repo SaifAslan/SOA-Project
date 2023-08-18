@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   productwebapi:
-    image: productwebapi:dev
+    image: buketfildisi/productwebapi:dev
     build:
       target: base
       labels:

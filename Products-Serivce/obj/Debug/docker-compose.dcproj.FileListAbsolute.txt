@@ -1,3 +1,4 @@
+C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\obj\Debug\docker-compose.dcproj.CoreCompileInputs.cache
 C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\bin\Debug\ProductWebApi.deps.json
 C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\bin\Debug\ProductWebApi.runtimeconfig.json
 C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\bin\Debug\appsettings.Development.json
@@ -21,5 +22,4 @@ C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\bin\Debug\Microsoft
 C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\bin\Debug\Microsoft.Identity.Client.dll
 C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\bin\Debug\ProductWebApi.pdb
 C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\obj\Debug\docker-compose.dcproj.AssemblyReference.cache
-C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\obj\Debug\docker-compose.dcproj.CoreCompileInputs.cache
 C:\Users\Buket Fildisi\source\repos\DemoMicroserviceSolution\obj\Debug\docker-compose.dcproj.CopyComplete

@@ -89,6 +89,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "../components/CheckoutForm";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
@@ -98,17 +99,28 @@ const stripePromise = loadStripe(
 
 export default function App() {
   const [options, setOptions] = useState(null);
-
+  const user = useSelector((state) => state.user);
+  const cartItems = useSelector((state) => state.cart.cartItems);
   useEffect(() => {
-    getPaymentIntent();
+    createOrder();
   }, []);
 
-  const getPaymentIntent = () => {
+  const createOrder = () => {
+    axios
+      .post("/createOrder", {
+        cartItems,
+        userId: user.userId,
+      })
+      .then((response) => {
+        getPaymentIntent(response.data.orderId);
+      });
+  };
+  const getPaymentIntent = (orderId) => {
     axios
       .post("http://localhost:8080/api/create-payment-intent", {
-        amount: 60,
-        orderId: 5464,
-        userId: 885498,
+        amount: calculateTotal().toFixed(2),
+        orderId,
+        userId: user.userId,
       })
       .then((response) => {
         setOptions({
@@ -116,6 +128,21 @@ export default function App() {
           clientSecret: response.data.clientSecret,
         });
       });
+  };
+
+  const calculateSubtotal = () => {
+    return cartItems.reduce((total, item) => total + item.amount, 0);
+  };
+
+  const calculateShippingCost = () => {
+    // Replace with your shipping cost calculation logic
+    return 5.0;
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const shippingCost = calculateShippingCost();
+    return subtotal + shippingCost;
   };
 
   // const options = {
