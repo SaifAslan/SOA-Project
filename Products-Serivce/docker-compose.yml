@@ -18,10 +18,10 @@ services:
       
   productwebapi:
     container_name: product-api
-    image: ${DOCKER_REGISTRY-}buketfildisi/productwebapi
-    build:
-      context: .
-      dockerfile: ProductWebApi/Dockerfile
+    image: buketfildisi/productwebapi:latest
+    # build:
+    #   context: .
+    #   dockerfile: ProductWebApi/Dockerfile
     networks:
       - backend
     environment:
