@@ -31,8 +31,13 @@ const AppLayout = ({ children }) => {
           <Menu.Item key="2" icon={<ShoppingCartOutlined />}>
             <Link to="/cart">Cart</Link>
           </Menu.Item>
+          {userInfo.userID ? (
+            <Menu.Item key="3" icon={<ShoppingCartOutlined />}>
+              <Link to="/cart">Orders</Link>
+            </Menu.Item>
+          ):null}
           <Menu.Item
-            key="3"
+            key="4"
             icon={<UserOutlined />}
             onClick={() => (userInfo.userID ? handleLogout() : null)}
           >

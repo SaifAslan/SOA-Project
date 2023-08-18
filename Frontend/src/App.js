@@ -6,8 +6,8 @@ import { Route, Routes } from "react-router-dom";
 import Products from "./routes/Products";
 import Login from "./routes/Login";
 import Checkout from "./routes/Checkout";
+import Orders from "./routes/Orders";
 
-// import Strip from "./routes/strip";
 
 function App() {
 
@@ -21,7 +21,8 @@ function App() {
             <Route path="/cart" Component={Cart} />
             <Route path="/login" Component={Login} />
             <Route path="/checkout" Component={Checkout} />
-            {/* <Route path="/stripe" Component={Strip} /> */}
+            <Route path="/orders" Component={Orders} />
+            
           </Routes>
         </div>
       </AppLayout>

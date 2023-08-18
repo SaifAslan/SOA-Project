@@ -2,34 +2,35 @@ import React, { useState } from "react";
 import { Card, Button, InputNumber, Row, Col } from "antd";
 import "../styles/cart.scss";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addProduct } from "../redux/features/cart/cartSlice";
 const CartPage = () => {
   // Replace with your cart data
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.cartItems);
 
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Product 1", price: 10.99, quantity: 2 },
-    { id: 2, name: "Product 2", price: 19.99, quantity: 1 },
-    { id: 3, name: "Product 3", price: 7.99, quantity: 3 },
-  ]);
-
-  const handleDelete = (itemId) => {
-    const updatedCartItems = cartItems.filter((item) => item.id !== itemId);
-    setCartItems(updatedCartItems);
+  const handleDelete = (productId) => {
+    const updatedCartItems = cartItems.filter((item) => item.id !== productId);
+    // setCartItems(updatedCartItems);
   };
-
-  const handleQuantityChange = (itemId, quantity) => {
-    const updatedCartItems = cartItems.map((item) => {
-      if (item.id === itemId) {
-        return { ...item, quantity };
-      }
-      return item;
-    });
-    setCartItems(updatedCartItems);
+  console.log(cartItems);
+  const handleQuantityChange = (item, quantity) => {
+    dispatch(
+      addProduct({
+        quantity: quantity,
+        product: {
+          id: item.productId,
+          price: item.amount,
+          title: item.name,
+        },
+      })
+    );
   };
 
   const calculateSubtotal = () => {
     return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
+      (total, item) => total + item.amount,
       0
     );
   };
@@ -53,14 +54,12 @@ const CartPage = () => {
             {cartItems.map((item) => (
               <Card key={item.id} className="cart-item">
                 <h3>{item.name}</h3>
-                <p>Price: ${item.price}</p>
-                <p>Quantity:</p>
+                <p>Price: ${item.amount}</p>
+                <p>Quantity: </p>
                 <InputNumber
                   min={1}
                   defaultValue={item.quantity}
-                  onChange={(quantity) =>
-                    handleQuantityChange(item.id, quantity)
-                  }
+                  onChange={(quantity) => handleQuantityChange(item, quantity)}
                 />
                 <Button onClick={() => handleDelete(item.id)}>Delete</Button>
               </Card>
@@ -73,8 +72,15 @@ const CartPage = () => {
               <h3>Summary</h3>
               <p>Subtotal: ${calculateSubtotal()}</p>
               <p>Shipping Cost: ${calculateShippingCost()}</p>
-              <p>Total: ${calculateTotal()}</p>
-              <Button type="primary" onClick={()=>{navigate("/checkout")}}>Checkout</Button>
+              <p>Total: ${calculateTotal().toFixed(2)}</p>
+              <Button
+                type="primary"
+                onClick={() => {
+                  navigate("/checkout");
+                }}
+              >
+                Checkout
+              </Button>
             </Card>
           </div>
         </Col>

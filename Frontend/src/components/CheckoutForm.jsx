@@ -6,11 +6,9 @@ import {
   useElements
 } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm({clientSecret}) {
+export default function CheckoutForm({clientSecret,orderId}) {
   const stripe = useStripe();
   const elements = useElements();
-
-  const [email, setEmail] = useState('');
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -57,8 +55,9 @@ export default function CheckoutForm({clientSecret}) {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000",
+        return_url: "/payment-success?order_id=" + orderId,
       },
+
     });
 
     // This point will only be reached if there is an immediate error when
