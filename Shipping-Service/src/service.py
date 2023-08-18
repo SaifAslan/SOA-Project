@@ -79,6 +79,8 @@ class ShippingService:
 
     def deliverShipment(self, shipment_id: str):
         shipment: Shipment = getShipment(shipment_id)
+        if shipment["delivered"]:
+            return shipment
         delivery_update = ShipmentCheckpoint(
             status="Delivered",
             location=shipment["destination"]["delivery_point"],

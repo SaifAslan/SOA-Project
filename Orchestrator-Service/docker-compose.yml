@@ -32,7 +32,6 @@ services:
     image: kositherocket/shipping-service
     container_name: shipping_service_container
     ports:
-      - "9000:9000"
       - "50051:50051"
     depends_on:
       shippingmongodb:

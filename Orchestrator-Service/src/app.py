@@ -185,7 +185,7 @@ def getAllCouriers():
 
 
 @app.get("/GetOrderInformation/{order_id}")
-def getShipmentInformation(order_id: str):
+def getShipmentInformation(order_id: int):
     order = ordersService.getCartById(order_id)
     if order is None:
         return "Failed to findl order"
@@ -199,8 +199,8 @@ def getAllShipmentInformation(user_id: str = None):
     courier = "cmp7174"
     orders = ordersService.getCartRequest("", user_id)
     for order in orders:
-        order["shipment"] = shippingService.getAllShipmentInformation(
-                                        str(order["cartId"]), courier)
+        order["shipments"] = shippingService.getAllShipmentInformation(
+                                        str(order["userId"]), courier)
     return orders
 
 
@@ -211,12 +211,16 @@ def checkService():
 
 @app.get("/GetCartRequest/{user_id}/{status}")
 def getCartRequest(user_id: str, status: str):
-    return ordersService.getCartRequest(user_id, status)
+    courier = "cmp7174"
+    orders = ordersService.getCartRequest(status, user_id)
+    for order in orders:
+        order["shipments"] = shippingService.getAllShipmentInformation(
+                                        str(order["userId"]), courier)
+    return orders
 
-
-@app.post("/PostCartStatusRequest/{status}")
-def postCartStatusRequest(status: str):
-    return ordersService.postCartRequest(status)
+# @app.post("/PostCartStatusRequest/{status}")
+# def postCartStatusRequest(status: str):
+#     return ordersService.postCartRequest(status)
 
 
 def serveHTTP():

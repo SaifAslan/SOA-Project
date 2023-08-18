@@ -54,4 +54,4 @@ EXPOSE 50051
 
 COPY . .
 
-CMD ["bash", "run.sh"]
+CMD ["python", "src/grpc_service.py"]
