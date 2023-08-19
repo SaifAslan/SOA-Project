@@ -29,7 +29,7 @@ const Login = () => {
   };
 
   const handleLogin = (userData) => {
-    console.log(userData);
+    console.log("env url", USER_SERVICE_URL + "/authenticateuser");
     axios
       .post(USER_SERVICE_URL + "/authenticateuser", userData)
       .then((response) => {
