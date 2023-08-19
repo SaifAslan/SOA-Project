@@ -70,7 +70,7 @@ services:
      restart: always
 
   products:
-    image: buketfildisi/productwebapi:latest
+    image: hassanharoon/productwebapi:latest
     container_name: product_service_container
     networks:
       - servicecommunication
