@@ -33,7 +33,7 @@ const AppLayout = ({ children }) => {
           </Menu.Item>
           {userInfo.userID ? (
             <Menu.Item key="3" icon={<ShoppingCartOutlined />}>
-              <Link to="/cart">Orders</Link>
+              <Link to="/orders">Orders</Link>
             </Menu.Item>
           ):null}
           <Menu.Item

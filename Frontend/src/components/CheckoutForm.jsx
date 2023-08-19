@@ -6,7 +6,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useSelector } from "react-redux";
-const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL;
+const FRONTEND_URL = "http://localhost:3000";
 
 export default function CheckoutForm({ clientSecret, orderId }) {
   const stripe = useStripe();

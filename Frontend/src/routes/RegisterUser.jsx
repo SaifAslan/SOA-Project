@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-const USER_SERVICE_URL = process.env.REACT_APP_USER_SERVICE_URL;
+const USER_SERVICE_URL = "http://localhost:6001";
 
 const onFinishFailed = (e) => {
   console.log("login form failed!", e);

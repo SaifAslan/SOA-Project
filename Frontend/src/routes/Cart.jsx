@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCartId, addProduct } from "../redux/features/cart/cartSlice";
 import axios from "axios";
 
-const ORCHESTRATOR_SERVICE_URL = process.env.REACT_APP_ORCHESTRATOR_SERVICE_URL;
+const ORCHESTRATOR_SERVICE_URL = "http://localhost:5001";
 
 const CartPage = () => {
   // Replace with your cart data
@@ -26,7 +26,7 @@ const CartPage = () => {
   const postCart = () => {
     axios
       .post(ORCHESTRATOR_SERVICE_URL + "/CreateOrder", {
-        userId: user.userId ?? "userId",
+        userId: user.userID ?? "userId",
         cartItem: cart.cartItems,
       })
       .then((response) => {

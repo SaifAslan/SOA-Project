@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { emptyCart } from "../redux/features/cart/cartSlice";
 import { useParams } from "react-router-dom";
 
-const ORCHESTRATOR_SERVICE_URL = process.env.REACT_APP_ORCHESTRATOR_SERVICE_URL;
+const ORCHESTRATOR_SERVICE_URL = "http://localhost:5001";
 
 function PaymentSuccess() {
   const cart = useSelector((state) => state.cart);

@@ -97,7 +97,7 @@ const stripePromise = loadStripe(
   "pk_test_51NMyLEEuOjFLJVPuq4bSZaqs1fbFro4PKBhANuxTByGDUhog4xbfxXt2U7IDTnzf3Qwnt664KRvs5bliKb9w5lhr00dAD8QEmK"
 );
 
-const PAYMENT_SERVICE_URL = process.env.REACT_APP_PAYMENT_SERVICE_URL;
+const PAYMENT_SERVICE_URL = "http://localhost:8070/api";
 
 export default function App() {
   const [options, setOptions] = useState(null);
@@ -113,7 +113,7 @@ export default function App() {
       .post(PAYMENT_SERVICE_URL + "/create-payment-intent", {
         amount: Math.round(calculateTotal()),
         orderId: +cart.cartId,
-        userId: user.userId ? +user.userId : 6474,
+        userId: user.userID ? +user.userID : 6474,
       })
       .then((response) => {
         setOptions({

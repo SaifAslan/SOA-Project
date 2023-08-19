@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { login } from "../redux/features/user/userSlice";
 
-const USER_SERVICE_URL = process.env.REACT_APP_USER_SERVICE_URL;
+const USER_SERVICE_URL = "http://localhost:6001";
 
 const onFinishFailed = (e) => {
   console.log("login form failed!", e);
@@ -33,9 +33,9 @@ const Login = () => {
     axios
       .post(USER_SERVICE_URL + "/authenticateuser", userData)
       .then((response) => {
-        dispatch(login(response.data))
+        dispatch(login(response.data));
         message.success("Login successful! 😎");
-        navigate("/")
+        navigate("/");
       })
       .catch((err) => {
         console.log({ err });

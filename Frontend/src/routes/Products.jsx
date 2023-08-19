@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Select } from "antd";
 import { Link } from "react-router-dom";
+import axios from "axios";
 // import { useSelector, useDispatch } from 'react-redux'
 const { Option } = Select;
 
@@ -45,6 +46,17 @@ const products = [
 
 const ProductCard = ({ product }) => {
   const { title, description, price, photo } = product;
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5150/api/Product/")
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log({ err });
+      });
+  }, []);
 
   return (
     <Card
