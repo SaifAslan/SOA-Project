@@ -3,25 +3,22 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { login } from "../redux/features/user/userSlice";
 
 const USER_SERVICE_URL = process.env.REACT_APP_USER_SERVICE_URL;
 
 const onFinishFailed = (e) => {
   console.log("login form failed!", e);
 };
-
-const Login = () => {
+function RegisterUser() {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (userInfo.userID) {
-      navigate("/");
-    }
-  }, [userInfo]);
+  //   useEffect(() => {
+  //     if (userInfo.userID) {
+  //       navigate("/");
+  //     }
+  //   }, [userInfo]);
 
   const onFinish = (values) => {
     handleLogin(values);
@@ -31,22 +28,24 @@ const Login = () => {
   const handleLogin = (userData) => {
     console.log(userData);
     axios
-      .post(USER_SERVICE_URL + "/authenticateuser", userData)
+      .post(USER_SERVICE_URL + "/adduser", {
+        ...userData,
+        userType: "buyer",
+      })
       .then((response) => {
-        dispatch(login(response.data))
-        message.success("Login successful! 😎");
-        navigate("/")
+        console.log(response);
+        message.success("Register successful! 😎");
+        setTimeout(navigate("/login"), 2000)
       })
       .catch((err) => {
         console.log({ err });
-        message.error("Login error! 😔");
+        message.error("Register error! 😔");
       });
   };
 
-  console.log(userInfo);
   return (
     <div>
-      <Card>
+      <Card style={{ width: "500px" }}>
         <Form
           form={form}
           name="basic"
@@ -91,16 +90,41 @@ const Login = () => {
           >
             <Input.Password />
           </Form.Item>
-
           <Form.Item
-            name="remember"
-            valuePropName="checked"
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
+            label="email"
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Please input your email!",
+              },
+            ]}
           >
-            <Checkbox>Remember me</Checkbox>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Mobile Number"
+            name="mobileNumber"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Mobile Number!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Address"
+            name="address"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Address!",
+              },
+            ]}
+          >
+            <Input />
           </Form.Item>
 
           <Form.Item
@@ -117,5 +141,6 @@ const Login = () => {
       </Card>
     </div>
   );
-};
-export default Login;
+}
+
+export default RegisterUser;

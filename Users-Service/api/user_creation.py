@@ -4,6 +4,7 @@ from database_connection import (
     hash_password,
     app,
     logging,
+    cross_origin,
 )
 
 
@@ -18,6 +19,7 @@ parser.add_argument("userType", required=True)
 
 
 @app.route("/adduser", methods=["POST"])
+@cross_origin()
 def add_user():
     args = parser.parse_args()
     user_name = args["userName"]

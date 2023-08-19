@@ -3,18 +3,40 @@ import { Card, Button, InputNumber, Row, Col } from "antd";
 import "../styles/cart.scss";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addProduct } from "../redux/features/cart/cartSlice";
+import { addCartId, addProduct } from "../redux/features/cart/cartSlice";
+import axios from "axios";
+
+const ORCHESTRATOR_SERVICE_URL = process.env.REACT_APP_ORCHESTRATOR_SERVICE_URL;
+
 const CartPage = () => {
   // Replace with your cart data
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.cartItems);
+  const cart = useSelector((state) => state.cart);
+  const user = useSelector((state) => state.user);
 
   const handleDelete = (productId) => {
-    const updatedCartItems = cartItems.filter((item) => item.id !== productId);
+    const updatedCartItems = cart.cartItems.filter(
+      (item) => item.id !== productId
+    );
     // setCartItems(updatedCartItems);
   };
-  console.log(cartItems);
+  console.log(cart);
+
+  const postCart = () => {
+    axios
+      .post(ORCHESTRATOR_SERVICE_URL + "/CreateOrder", {
+        userId: user.userId ?? "userId",
+        cartItem: cart.cartItems,
+      })
+      .then((response) => {
+        dispatch(addCartId(response.data.cartId));
+        navigate("/checkout");
+      })
+      .catch((error) => {
+        console.log({ error });
+      });
+  };
   const handleQuantityChange = (item, quantity) => {
     dispatch(
       addProduct({
@@ -29,10 +51,7 @@ const CartPage = () => {
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.amount,
-      0
-    );
+    return cart.cartItems.reduce((total, item) => total + item.amount, 0);
   };
 
   const calculateShippingCost = () => {
@@ -51,7 +70,7 @@ const CartPage = () => {
       <Row gutter={32}>
         <Col md={24} lg={16}>
           <div className="cart-items">
-            {cartItems.map((item) => (
+            {cart.cartItems.map((item) => (
               <Card key={item.id} className="cart-item">
                 <h3>{item.name}</h3>
                 <p>Price: ${item.amount}</p>
@@ -76,7 +95,8 @@ const CartPage = () => {
               <Button
                 type="primary"
                 onClick={() => {
-                  navigate("/checkout");
+                  postCart();
+                  // navigate("/checkout");
                 }}
               >
                 Checkout
