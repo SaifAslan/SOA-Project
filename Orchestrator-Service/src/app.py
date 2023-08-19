@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from orders import OrdersService
 from shipping import ShippingService
 import random
+import requests
 
 
 # from pydantic import BaseModel
@@ -218,12 +219,69 @@ def getCartRequest(user_id: str, status: str):
                                         str(order["userId"]), courier)
     return orders
 
-# @app.post("/PostCartStatusRequest/{status}")
-# def postCartStatusRequest(status: str):
-#     return ordersService.postCartRequest(status)
+
+products = [
+  {
+    "productId": 1,
+    "productName": "Wireless Bluetooth Earbuds",
+    "productDescription": "Immerse yourself in high-quality sound"
+    "with these wireless Bluetooth earbuds. Enjoy seamless connectivity"
+    " and convenience on the go.",
+    "category": "Technology",
+    "price": 49.99,
+    "CreatedDate": "2019-01-06T17:16:40",
+    "UpdatedDate": "2023-01-06T17:17:40"
+  },
+  {
+    "productId": 2,
+    "productName": "Smart Fitness Tracker Watch",
+    "productDescription": "Track your fitness goals and stay motivated "
+    "with this  smart fitness tracker watch. Monitor your heart rate, "
+    "track your workouts, and receive notifications on your wrist.",
+    "category": "Technology",
+    "price": 79.99,
+    "CreatedDate": "2019-01-06T17:16:40",
+    "UpdatedDate": "2023-01-06T17:17:40"
+  },
+  {
+    "productId": 19,
+    "productName": "Premium Coffee Beans",
+    "productDescription": "Indulge in the rich and aromatic flavors of our "
+    "premium coffee beans. Sourced from the finest coffee plantations,"
+    " these beans offer a truly satisfying coffee experience.",
+    "category": "Beverages",
+    "price": 12.99,
+    "CreatedDate": "2019-01-06T17:16:40",
+    "UpdatedDate": "2023-01-06T17:17:40"
+  },
+  {
+    "productId": 20,
+    "productName": "Portable External Hard Drive",
+    "productDescription": "Expand your storage capacity and securely store"
+    " your files with this portable external hard drive. With ample space"
+    " and fast data transfer speeds, it's the perfect companion for your"
+    " digital storage needs.",
+    "category": "Technology",
+    "price": 89.99,
+    "CreatedDate": "2019-01-06T17:16:40",
+    "UpdatedDate": "2023-01-06T17:17:40"
+  },
+]
+
+
+def initiateProducts():
+    data = requests.get("http://products:80/api/Product/").json()
+    headers = {'Content-Type': 'application/json'}
+    if len(data) == 0:
+        for product in products:
+            requests.post("http://products:80/api/Product/",
+                          json=product, headers=headers)
+    print("Done adding initial product data")
 
 
 def serveHTTP():
+    print("Initiating product data")
+    initiateProducts()
     print("Starting HTTP Server")
     port = 5001
     host = "0.0.0.0"
@@ -233,3 +291,4 @@ def serveHTTP():
 
 if __name__ == "__main__":
     serveHTTP()
+initiateProducts()
