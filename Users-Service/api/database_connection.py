@@ -1,11 +1,12 @@
 from flask import Flask
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import logging
 import sqlite3
 import bcrypt
 
 app = Flask("UsersAPI")
-CORS(app)
+CORS(app, origins="*", methods="*", allow_headers=["Content-Type"])
+app.config["CORS_HEADERS"] = "Content-Type"
 
 # allow logging to include debug level messages
 logging.basicConfig(level=logging.DEBUG)
