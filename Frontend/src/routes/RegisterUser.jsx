@@ -45,19 +45,11 @@ function RegisterUser() {
 
   return (
     <div>
-      <Card style={{ width: "500px" }}>
+      <Card >
         <Form
           form={form}
           name="basic"
-          labelCol={{
-            span: 8,
-          }}
-          wrapperCol={{
-            span: 16,
-          }}
-          style={{
-            maxWidth: 600,
-          }}
+       
           initialValues={{
             remember: true,
           }}
@@ -128,13 +120,9 @@ function RegisterUser() {
           </Form.Item>
 
           <Form.Item
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
           >
             <Button type="primary" htmlType="submit">
-              Submit
+              Register
             </Button>
           </Form.Item>
         </Form>

@@ -11,7 +11,7 @@ export const cartSlice = createSlice({
       let cartItemsLength = state.cartItems.length;
       let foundItem;
       for (let i = 0; i < cartItemsLength; i++) {
-        if (state.cartItems[i].productId === action.payload.product.id) {
+        if (state.cartItems[i].productId === action.payload.product.productId) {
           state.cartItems[i].quantity = action.payload.quantity;
           state.cartItems[i].amount =
             action.payload.quantity * +action.payload.product.price;
@@ -21,8 +21,8 @@ export const cartSlice = createSlice({
       }
       if (!foundItem) {
         state.cartItems.push({
-          productId: action.payload.product.id,
-          name: action.payload.product.title,
+          productId: action.payload.product.productId,
+          name: action.payload.product.productName,
           quantity: action.payload.quantity,
           amount: action.payload.quantity * +action.payload.product.price,
         });
@@ -31,7 +31,7 @@ export const cartSlice = createSlice({
     },
     removeProduct: (state, action) => {
       return state.cartItems.filter(
-        (item) => item.productId !== action.payload.product.id
+        (item) => item.productId !== action.payload.product.productId
       );
     },
     emptyCart: (state, action) => {

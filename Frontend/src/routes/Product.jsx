@@ -3,11 +3,23 @@ import { Row, Col, Card, Button, message } from "antd";
 import { Routes, Route, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addProduct } from "../redux/features/cart/cartSlice";
+import axios from "axios";
 
 const ProductPage = ({}) => {
   const { productId } = useParams();
   const dispatch = useDispatch();
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState({});
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5150/api/Product/" + productId)
+      .then((res) => {
+        setProduct(res.data);
+      })
+      .catch((err) => {
+        console.log({ err });
+      });
+  }, []);
 
   useEffect(() => {
     let fetchedProduct = products.find((item) => item.id === +productId);
@@ -18,11 +30,9 @@ const ProductPage = ({}) => {
     try {
       dispatch(addProduct({ product, quantity: 1 }));
       message.success("Product added to cart! 🥳");
-      
     } catch (error) {
       console.log("error", error);
       message.error("Error occured please contact support!");
-
     }
   };
 
@@ -33,7 +43,7 @@ const ProductPage = ({}) => {
           <Col xs={24} md={12}>
             <img
               alt={product.name}
-              src={product.photo}
+              src={products.find((product) => product.id == productId).photo}
               height={600}
               style={{ objectFit: "cover" }}
               // className="product-image"
@@ -41,8 +51,8 @@ const ProductPage = ({}) => {
           </Col>
           <Col xs={24} md={12}>
             <Card className="product-details">
-              <h1 className="product-name">{product.title}</h1>
-              <p className="product-description">{product.description}</p>
+              <h1 className="product-name">{product.productName}</h1>
+              <p className="product-description">{product.productDescription}</p>
               <p className="product-price">Price: ${product.price}</p>
               <Button
                 type="primary"
