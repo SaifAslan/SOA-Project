@@ -12,9 +12,8 @@ exports.postPayment = async (req, res, next) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: "gbp",
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      payment_method_types: ['card'],
+
     });
     // You can perform validation on the incoming data here if needed
 

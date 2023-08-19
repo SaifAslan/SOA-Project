@@ -3,6 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { login } from "../redux/features/user/userSlice";
+
+const USER_SERVICE_URL = process.env.REACT_APP_USER_SERVICE_URL;
+
 const onFinishFailed = (e) => {
   console.log("login form failed!", e);
 };
@@ -20,22 +24,22 @@ const Login = () => {
   }, [userInfo]);
 
   const onFinish = (values) => {
-    handleLogin(values)
+    handleLogin(values);
     // handleLogin(values);
   };
 
   const handleLogin = (userData) => {
     console.log(userData);
     axios
-      .post("http://localhost:9000/authenticateuser", userData)
+      .post(USER_SERVICE_URL + "/authenticateuser", userData)
       .then((response) => {
-        console.log(response);
-        message.success("Login successful! 😎"); 
+        dispatch(login(response.data))
+        message.success("Login successful! 😎");
+        navigate("/")
       })
       .catch((err) => {
         console.log({ err });
-        message.error("Login error! 😔"); 
-
+        message.error("Login error! 😔");
       });
   };
 

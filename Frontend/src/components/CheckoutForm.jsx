@@ -3,21 +3,22 @@ import {
   PaymentElement,
   LinkAuthenticationElement,
   useStripe,
-  useElements
+  useElements,
 } from "@stripe/react-stripe-js";
+import { useSelector } from "react-redux";
+const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL;
 
-export default function CheckoutForm({clientSecret,orderId}) {
+export default function CheckoutForm({ clientSecret, orderId }) {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const cart = useSelector((state) => state.cart);
   useEffect(() => {
     if (!stripe) {
       return;
     }
 
-  
     if (!clientSecret) {
       return;
     }
@@ -55,9 +56,8 @@ export default function CheckoutForm({clientSecret,orderId}) {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "/payment-success?order_id=" + orderId,
+        return_url: FRONTEND_URL + "/payment-success/" + cart.cartId,
       },
-
     });
 
     // This point will only be reached if there is an immediate error when
@@ -75,8 +75,8 @@ export default function CheckoutForm({clientSecret,orderId}) {
   };
 
   const paymentElementOptions = {
-    layout: "tabs"
-  }
+    layout: "tabs",
+  };
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>

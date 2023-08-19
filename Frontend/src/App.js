@@ -7,6 +7,8 @@ import Products from "./routes/Products";
 import Login from "./routes/Login";
 import Checkout from "./routes/Checkout";
 import Orders from "./routes/Orders";
+import RegisterUser from "./routes/RegisterUser";
+import PaymentSuccess from "./routes/PaymentSuccess";
 
 
 function App() {
@@ -22,7 +24,9 @@ function App() {
             <Route path="/login" Component={Login} />
             <Route path="/checkout" Component={Checkout} />
             <Route path="/orders" Component={Orders} />
-            
+            <Route path="/register" Component={RegisterUser} />
+            <Route path="/payment-success/:orderid" Component={PaymentSuccess} />
+
           </Routes>
         </div>
       </AppLayout>

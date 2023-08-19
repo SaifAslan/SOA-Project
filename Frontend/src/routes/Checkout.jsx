@@ -97,30 +97,23 @@ const stripePromise = loadStripe(
   "pk_test_51NMyLEEuOjFLJVPuq4bSZaqs1fbFro4PKBhANuxTByGDUhog4xbfxXt2U7IDTnzf3Qwnt664KRvs5bliKb9w5lhr00dAD8QEmK"
 );
 
+const PAYMENT_SERVICE_URL = process.env.REACT_APP_PAYMENT_SERVICE_URL;
+
 export default function App() {
   const [options, setOptions] = useState(null);
   const user = useSelector((state) => state.user);
-  const cartItems = useSelector((state) => state.cart.cartItems);
+  const cart = useSelector((state) => state.cart);
   useEffect(() => {
-    createOrder();
+    getPaymentIntent();
   }, []);
 
-  const createOrder = () => {
-    axios
-      .post("/createOrder", {
-        cartItems,
-        userId: user.userId,
-      })
-      .then((response) => {
-        getPaymentIntent(response.data.orderId);
-      });
-  };
   const getPaymentIntent = (orderId) => {
+    console.log(Math.round(calculateTotal()));
     axios
-      .post("http://localhost:8080/api/create-payment-intent", {
-        amount: calculateTotal().toFixed(2),
-        orderId,
-        userId: user.userId,
+      .post(PAYMENT_SERVICE_URL + "/create-payment-intent", {
+        amount: Math.round(calculateTotal()),
+        orderId: +cart.cartId,
+        userId: user.userId ? +user.userId : 6474,
       })
       .then((response) => {
         setOptions({
@@ -131,7 +124,7 @@ export default function App() {
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((total, item) => total + item.amount, 0);
+    return cart.cartItems.reduce((total, item) => total + item.amount, 0);
   };
 
   const calculateShippingCost = () => {
