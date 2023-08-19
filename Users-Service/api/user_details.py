@@ -5,6 +5,7 @@ from database_connection import (
     bcrypt,
     sqlite3,
     logging,
+    cross_origin,
 )
 
 
@@ -15,6 +16,7 @@ parser.add_argument("password", required=True)
 
 
 @app.route("/authenticateuser", methods=["POST"])
+@cross_origin()
 def authenticate_user():
     args = parser.parse_args()
     user_name = args["userName"]
