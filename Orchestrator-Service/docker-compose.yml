@@ -137,6 +137,12 @@ services:
       authentication:
         condition: service_started
     restart: always
+    environment:
+      - REACT_APP_USER_SERVICE_URL = "http://authentication:6001"
+      - REACT_APP_ORCHESTRATOR_SERVICE_URL = "http://orchestrator:5001"
+      - REACT_APP_PAYMENT_SERVICE_URL = "http://payment:8070/api"
+      - REACT_APP_PRODUCTS_SERVICE_URL = "http://products:80/api"
+      - REACT_APP_FRONTEND_URL = "http://localhost:3000"  
 
 networks:
   servicecommunication:
