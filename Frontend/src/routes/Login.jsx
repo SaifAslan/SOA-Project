@@ -43,7 +43,6 @@ const Login = () => {
       });
   };
 
-  console.log(userInfo);
   return (
     <div>
       <Card>
@@ -88,7 +87,7 @@ const Login = () => {
             <Col>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
-                  Submit
+                  Login
                 </Button>
               </Form.Item>
             </Col>

@@ -111,17 +111,18 @@ const CartPage = () => {
             <div className="cart-items">
               {cart.cartItems.map((item) => (
                 <Card key={item.productId} className="cart-item">
-                  <h3>{item.label}</h3>
+                  <h3>{item.name}</h3>
                   <p>Price: ${item.amount.toFixed(2)}</p>
                   <p>Quantity: </p>
                   <InputNumber
+                  style={{marginRight:"1rem"}}
                     min={1}
                     defaultValue={item.quantity}
                     onChange={(quantity) =>
                       handleQuantityChange(item, quantity)
                     }
                   />
-                  <Button onClick={() => handleDelete(item.productId)}>
+                  <Button  onClick={() => handleDelete(item.productId)}>
                     Delete
                   </Button>
                 </Card>
