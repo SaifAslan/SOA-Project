@@ -90,6 +90,8 @@ import CheckoutForm from "../components/CheckoutForm";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { message } from "antd";
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
@@ -104,6 +106,7 @@ export default function App() {
   const user = useSelector((state) => state.user);
   const cart = useSelector((state) => state.cart);
   useEffect(() => {
+ 
     getPaymentIntent();
   }, []);
 
@@ -134,7 +137,7 @@ export default function App() {
 
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
-    const shippingCost = calculateShippingCost();
+    const shippingCost = cart.deliveryCost
     return subtotal + shippingCost;
   };
 

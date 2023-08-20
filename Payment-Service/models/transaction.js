@@ -1,8 +1,6 @@
-// Step 1: Install dependencies and set up Mongoose
 const mongoose = require('mongoose');
 
 
-// Step 2: Define the Mongoose Schema for transactions
 const transactionSchema = new mongoose.Schema({
   userId: {
     type: String, // Assuming you have a User model with an ObjectId as the primary key
@@ -34,10 +32,8 @@ const transactionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // You can add more fields relevant to your use case, e.g., customer information, payment gateway details, etc.
 });
 
-// Step 3: Create the Mongoose Model for transactions
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
 // Export the model to be used in other parts of your application

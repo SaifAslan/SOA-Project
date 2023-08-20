@@ -7,7 +7,6 @@ import { useParams } from "react-router-dom";
 const ORCHESTRATOR_SERVICE_URL = "http://localhost:5001";
 
 function PaymentSuccess() {
-  const cart = useSelector((state) => state.cart);
   const { orderid } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -36,7 +35,12 @@ function PaymentSuccess() {
       });
   }, []);
 
-  return <div>PaymentSuccess {orderid}</div>;
+  return (
+    <div>
+      <p>Payment Successful!</p>
+      <p>Your Order ID is : {orderid}</p>
+    </div>
+  );
 }
 
 export default PaymentSuccess;
