@@ -13,7 +13,6 @@ This is the implementation of the group project for software oriented architectu
 8) To view orders: login first, click the order tab  in the navigation bar
 9) To track the order: navigate to order page and enter the order id and click "track"
 
-
 The other services are also all serviced individually and can be found on the following ports 
 - Frontend = http;//localhost:3000 (WebApp)
 - Shipping = http;//localhost:50051 (GRPC)
