@@ -9,21 +9,28 @@ import io.spring.guides.gs_producing_web_service_cart.*;
 
 import jakarta.transaction.Transactional;
 
+import org.hibernate.JDBCException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 
+import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Endpoint
 public class CartEndpoint {
+
+    private List<Carts> cartsList;
     private static final String NAMESPACE_URI = "http://spring.io/guides/gs-producing-web-service-cart";
 
+    private boolean flag;
 
     @Autowired
     Cart_itemRepo repo_cart;
@@ -35,11 +42,24 @@ public class CartEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "postCartRequest")
     @ResponsePayload
     @Transactional
-    public PostCartResponse postCart(@RequestPayload PostCartRequest request) {
+    public PostCartResponse postCart(@RequestPayload PostCartRequest request) throws SQLException {
         PostCartResponse response = new PostCartResponse();
         Carts carts = new Carts();
         carts.setUserId(request.getCartSubmissionRequest().getUserId());
         carts.setStatus(request.getCartSubmissionRequest().getStatus());
+        carts.setCart_id(request.getCartSubmissionRequest().getCartId());
+
+//        Adding the update clause
+
+        Carts updateCart = cartRepo.findById(request.getCartSubmissionRequest().getCartId()).orElse(null);
+        if (updateCart != null){
+            updateCart.setStatus(request.getCartSubmissionRequest().getStatus());
+            cartRepo.save(updateCart);
+            response.setMessage("Updated");
+            flag = true;
+        }
+
+
         System.out.println("The value of cartId " + carts.getUserId());
 //        Cart_items cart_items = new Cart_items();
         List<CartItem> cartItem = request.getCartSubmissionRequest().getCartItem();
@@ -54,12 +74,14 @@ public class CartEndpoint {
         cart_items.get(0).getCart().getCart_id();
         System.out.println("This is the cart_item " + cart_items.get(0).getCart().getUserId());
 
-        repo_cart.saveAll(cart_items);
+        if (flag != true) {
+           repo_cart.saveAll(cart_items);
+            response.setMessage("Success");
+        }
+
 
         response.setCartSubmissionRequest(request.getCartSubmissionRequest());
 
-
-        response.setMessage("Success");
 
         return response;
     }
@@ -73,7 +95,7 @@ public class CartEndpoint {
 
         List<CartData> listCartData = new ArrayList<>();
         System.out.println("This is the cart method");
-        List<Carts> cartsList = cartRepo.findByStatus(request.getStatus());
+        cartsList = cartRepo.findByStatus(request.getStatus());
         System.out.println("This is the total number of carts: " + cartsList.size());
 
         for (Carts cartsLists : cartsList) {
@@ -88,6 +110,7 @@ public class CartEndpoint {
                 cartItem.setAmount(cart_item.getAmount());
                 cartItem.setQuantity(cart_item.getQuantity());
                 cartItem.setProductId(cart_item.getProduct_id());
+                cartItem.setName(cart_item.getName());
                 cartData.getCartItem().add(cartItem);
             }
 
@@ -111,7 +134,11 @@ public class CartEndpoint {
         GetCartByUserResponse response = new GetCartByUserResponse();
         List<CartData> listCartData = new ArrayList<>();
         System.out.println("This is the cart method");
-        List<Carts> cartsList = cartRepo.findByUserIdAndStatus(request.getUserId(),request.getStatus());
+        if (request.getStatus().isBlank()) {
+            cartsList = cartRepo.findByUserId(request.getUserId());
+        } else {
+            cartsList = cartRepo.findByUserIdAndStatus(request.getUserId(), request.getStatus());
+        }
 
         for (Carts cartsLists : cartsList) {
             CartData cartData = new CartData();
@@ -125,6 +152,7 @@ public class CartEndpoint {
                 cartItem.setAmount(cart_item.getAmount());
                 cartItem.setQuantity(cart_item.getQuantity());
                 cartItem.setProductId(cart_item.getProduct_id());
+                cartItem.setName(cart_item.getName());
                 cartData.getCartItem().add(cartItem);
             }
 
@@ -144,7 +172,7 @@ public class CartEndpoint {
         cartItemsEntity.setProduct_id(cartItem.getProductId());
         cartItemsEntity.setQuantity(cartItem.getQuantity());
         cartItemsEntity.setAmount(cartItem.getAmount());
-
+        cartItemsEntity.setName(cartItem.getName());
         System.out.println("this is inside the method" + cartItemsEntity.getProduct_id());
         // Set other properties as needed
         return cartItemsEntity;

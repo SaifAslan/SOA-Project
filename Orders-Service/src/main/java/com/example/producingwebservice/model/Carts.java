@@ -9,7 +9,7 @@ import lombok.Data;
 @Table(name = "carts")
 public class Carts {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_id")
     private long cart_id;
     @Column(name = "user_id", nullable = false)
