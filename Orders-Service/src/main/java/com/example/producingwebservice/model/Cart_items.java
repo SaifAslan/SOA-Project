@@ -18,6 +18,7 @@ public class Cart_items {
     private Carts cart;
 
     private String product_id;
+    private String name;
     private int quantity;
     private double amount;
 }
