@@ -1,0 +1,149 @@
+version: '3'
+
+# Once you use the Network tag and put both the containers on the same network you will use the internal ports not the public one cause you have created a bridge
+services:
+  orderspostgresdb:
+    image: postgres:15.2
+    container_name: orders_postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: SOACourse
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.txt
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - servicecommunication
+    ports:
+      - "5431:5432"
+
+  productdb:
+    container_name: products_mssql_container
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
+    networks:
+      - servicecommunication
+    ports:
+      - 18001:1433
+
+  shippingmongodb:
+    image: mongo
+    container_name: shipping_mongo_container
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: examplepassword
+    networks:
+      - servicecommunication
+
+  shipping:
+    image: kositherocket/shipping-service
+    container_name: shipping_service_container
+    ports:
+      - "50051:50051"
+    depends_on:
+      shippingmongodb:
+        condition: service_started
+    environment:
+      MONGODB_HOST: shippingmongodb
+    networks:
+      - servicecommunication
+    restart: always
+
+  orders:
+     image: hassanharoon/order-service-soacourse:v1.0
+     container_name: orders_service_container
+     ports:
+       - "8080:8080"
+     environment:
+       db-url: jdbc:postgresql://orderspostgresdb:5432/SOACourse
+       db-username: postgres
+       db-password: postgres
+     depends_on:
+      orderspostgresdb:
+        condition: service_started
+     networks:
+       - servicecommunication
+     restart: always
+
+  products:
+    image: hassanharoon/productwebapi:latest
+    container_name: product_service_container
+    networks:
+      - servicecommunication
+    depends_on:
+      productdb:
+        condition: service_started
+    environment:
+      - DB_HOST=productdb
+      - DB_NAME=ProductDB158
+      - DB_SA_PASSWORD=password@12345#
+    ports:
+      - 5150:80
+    restart: always
+
+  payment:
+    image: saif24007/payment-service
+    container_name: payment_service_container
+    networks:
+      - servicecommunication
+    ports:
+      - "8070:8070"
+    environment:
+      - MONGODB_PASSWORD=aXaodzYRluI7SwJW
+      - STRIPE_SK=sk_test_51NMyLEEuOjFLJVPumvdQ9DSan3aZ6rQmg5mKQBDhyTRt71wvQ5ly95ac9HB5MP6c1okiKWkSidODuFnFLYPamhdO00XlsWY65R
+    restart: always
+  
+  authentication:
+    image: adhamsakr/users-service
+    container_name: authentication_service_container
+    networks:
+      - servicecommunication
+    ports:
+      - "6001:6001"
+    restart: always
+  
+  orchestrator:
+    image: kositherocket/orchestratorservice
+    container_name: orchestrator_service_container
+    ports:
+      - "5001:5001"
+    depends_on:
+      orders:
+        condition: service_started
+      shipping:
+        condition: service_started
+      products:
+        condition: service_started
+    networks:
+      - servicecommunication
+    restart: always
+
+  frontend:
+    image: saif24007/soa-frontend-i
+    container_name: frontend_service_container
+    networks:
+      - servicecommunication
+    ports:
+      - "3000:3000"
+    depends_on:
+      orchestrator:
+        condition: service_started
+      products:
+        condition: service_started
+      authentication:
+        condition: service_started
+    restart: always
+    environment:
+      - REACT_APP_USER_SERVICE_URL = "http://authentication:6001"
+      - REACT_APP_ORCHESTRATOR_SERVICE_URL = "http://orchestrator:5001"
+      - REACT_APP_PAYMENT_SERVICE_URL = "http://payment:8070/api"
+      - REACT_APP_PRODUCTS_SERVICE_URL = "http://products:80/api"
+      - REACT_APP_FRONTEND_URL = "http://localhost:3000"  
+
+networks:
+  servicecommunication:
+    driver: bridge
